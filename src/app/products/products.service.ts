@@ -11,7 +11,10 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 /** rxjs Imports */
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
+
+/** Custom Models */
+import { LoanProductBasicDetails } from 'app/loans/models/loan-product.model';
 
 /** Custom Services */
 import { SettingsService } from 'app/settings/settings.service';
@@ -36,8 +39,19 @@ export class ProductsService {
   /**
    * @returns {Observable<any>} Loan Products basis details data.
    */
-  getLoanProductsBasicDetails(): Observable<any> {
-    return this.http.get('/loanproducts/basic-details');
+  getLoanProductsBasicDetails(): Observable<LoanProductBasicDetails[]> {
+    return this.http.get<any[]>('/loanproducts').pipe(
+      map((products: any[]) =>
+        products.map((product: any) => ({
+          productType: 'loan',
+          id: product.id,
+          name: product.name,
+          shortName: product.shortName,
+          description: product.description ?? '',
+          currency: product.currency
+        }))
+      )
+    );
   }
 
   createLoanProduct(productType: string, loanProduct: any): Observable<any> {
