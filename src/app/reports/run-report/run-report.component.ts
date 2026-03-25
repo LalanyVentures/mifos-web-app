@@ -458,28 +458,89 @@ export class RunReportComponent implements OnInit {
       decimalChoice: this.decimalChoice.value
       // exportCSV: true
     };
-    this.reportsService.getRunReportData(reportName, payload).subscribe((res: any) => {
-      if (res.data.length > 0) {
-        this.alertService.alert({ type: 'Report generation', message: `Report: ${reportName} data generated` });
+    this.reportsService.getRunReportData(reportName, payload).subscribe({
+      next: async (res: any) => {
+        if (res.data.length > 0) {
+          this.alertService.alert({ type: 'Report generation', message: `Report: ${reportName} data generated` });
 
-        const displayedColumns: string[] = [];
-        res.columnHeaders.forEach((header: any) => {
-          displayedColumns.push(header.columnName);
-        });
+          const displayedColumns: string[] = [];
+          res.columnHeaders.forEach((header: any) => {
+            displayedColumns.push(header.columnName);
+          });
 
-        this.exportToXLS(reportName, res.data, displayedColumns);
-      } else {
-        this.alertService.alert({ type: 'Report generation', message: `Report: ${reportName} without data generated` });
+          const activeFilters = this.buildActiveFilters();
+          await this.exportToXLS(reportName, res.data, displayedColumns, activeFilters);
+        } else {
+          this.alertService.alert({
+            type: 'Report generation',
+            message: `Report: ${reportName} without data generated`
+          });
+        }
+        this.isProcessing = false;
+      },
+      error: () => {
+        this.alertService.alert({ type: 'Report generation', message: `Failed to generate report: ${reportName}` });
+        this.isProcessing = false;
       }
-      this.isProcessing = false;
     });
   }
 
-  async exportToXLS(reportName: string, csvData: any, displayedColumns: string[]): Promise<void> {
+  private buildActiveFilters(): Array<{ label: string; value: string }> {
+    const filters: Array<{ label: string; value: string }> = [];
+    const formValue = this.reportForm.value;
+
+    for (const [
+      key,
+      rawValue
+    ] of Object.entries(formValue)) {
+      if (key === 'outputType' || key === 'exportOutputToS3') {
+        continue;
+      }
+
+      const param = this.paramData.find((entry: ReportParameter) => entry.name === key);
+      if (!param || rawValue === null || rawValue === undefined || rawValue === '') {
+        continue;
+      }
+
+      let value = '';
+      switch (param.displayType) {
+        case 'select':
+          if (typeof rawValue === 'object' && rawValue !== null) {
+            const option = rawValue as { name?: string; id?: string | number };
+            value = String(option.name ?? option.id ?? '');
+          } else {
+            value = String(rawValue);
+          }
+          break;
+        case 'date':
+          value = this.dateUtils.formatDate(rawValue, this.settingsService.dateFormat);
+          break;
+        default:
+          value = String(rawValue);
+          break;
+      }
+
+      if (value) {
+        filters.push({
+          label: param.label || param.name,
+          value
+        });
+      }
+    }
+
+    return filters;
+  }
+
+  async exportToXLS(
+    reportName: string,
+    reportRows: any,
+    displayedColumns: string[],
+    activeFilters: Array<{ label: string; value: string }>
+  ): Promise<void> {
     const fileName = `${reportName}.xlsx`;
 
     // Format data for ExcelJS
-    const data = csvData.map((object: any) => {
+    const data = reportRows.map((object: any) => {
       const row: Record<string, any> = {};
       for (let i = 0; i < displayedColumns.length; i++) {
         row[displayedColumns[i]] = object.row[i];
@@ -489,14 +550,51 @@ export class RunReportComponent implements OnInit {
 
     // Create workbook and worksheet
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('report');
+    const worksheet = workbook.addWorksheet('Report');
+    const totalColumns = Math.max(displayedColumns.length, 2, 1);
 
-    // Add header
-    worksheet.addRow(displayedColumns);
+    worksheet.mergeCells(1, 1, 1, totalColumns);
+    const titleCell = worksheet.getCell(1, 1);
+    titleCell.value = reportName;
+    titleCell.font = { bold: true, size: 16 };
 
-    // Add data rows
+    const metadataRowValues: string[] = [
+      'Generated At',
+      new Date().toLocaleString()
+    ];
+    activeFilters.forEach((filter) => {
+      metadataRowValues.push(filter.label, filter.value);
+    });
+    const metadataRow = worksheet.addRow(metadataRowValues);
+    metadataRow.eachCell((cell, columnNumber) => {
+      if (columnNumber % 2 === 1) {
+        cell.font = { bold: true };
+      }
+    });
+
+    worksheet.addRow([]);
+
+    const headerRow = worksheet.addRow(displayedColumns);
+    headerRow.font = { bold: true };
+
     data.forEach((rowObj: any) => {
       worksheet.addRow(displayedColumns.map((col) => rowObj[col]));
+    });
+
+    worksheet.views = [
+      {
+        state: 'frozen',
+        ySplit: 4
+      }
+    ];
+
+    worksheet.columns.forEach((column) => {
+      let maxLength = 10;
+      column.eachCell?.({ includeEmpty: true }, (cell) => {
+        const cellValue = cell.value ? String(cell.value) : '';
+        maxLength = Math.max(maxLength, cellValue.length + 2);
+      });
+      column.width = Math.min(maxLength, 40);
     });
 
     // Write to buffer and trigger download
