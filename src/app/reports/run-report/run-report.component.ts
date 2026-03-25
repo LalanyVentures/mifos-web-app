@@ -146,6 +146,10 @@ export class RunReportComponent implements OnInit {
     return this.report.type === 'Table';
   }
 
+  isTabularReport(): boolean {
+    return this.report.type === 'Table' || this.report.type === 'SMS';
+  }
+
   isPentahoReport(): boolean {
     return this.report.type === 'Pentaho';
   }
