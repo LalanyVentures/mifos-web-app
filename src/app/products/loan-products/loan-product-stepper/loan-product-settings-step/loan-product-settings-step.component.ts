@@ -118,7 +118,11 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
         this.loanProductsTemplate.interestRecalculationCompoundingTypeOptions;
       this.interestRecalculationFrequencyTypeData = this.loanProductsTemplate.interestRecalculationFrequencyTypeOptions;
       this.interestRecalculationNthDayTypeData = this.loanProductsTemplate.interestRecalculationNthDayTypeOptions;
-      this.interestRecalculationNthDayTypeData.push({ id: -2, code: 'onDay', value: 'on day' });
+      this.interestRecalculationNthDayTypeData.push({
+        id: -2,
+        code: 'onDay',
+        value: 'on day'
+      });
       this.interestRecalculationDayOfWeekTypeData = this.loanProductsTemplate.interestRecalculationDayOfWeekTypeOptions;
       this.interestRecalculationOnDayTypeData = Array.from({ length: 28 }, (_, index) => index + 1);
       this.loanScheduleTypeData = this.loanProductsTemplate.loanScheduleTypeOptions;
@@ -155,7 +159,6 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
         multiDisburseLoan: this.loanProductsTemplate.multiDisburseLoan,
         maxTrancheCount: this.loanProductsTemplate.maxTrancheCount,
         outstandingLoanBalance: this.loanProductsTemplate.outstandingLoanBalance,
-        allowFullTermForTranche: this.loanProductsTemplate.allowFullTermForTranche,
         enableDownPayment: this.loanProductsTemplate.enableDownPayment,
         enableInstallmentLevelDelinquency: this.loanProductsTemplate.enableInstallmentLevelDelinquency,
         loanScheduleType: this.loanProductsTemplate.loanScheduleType.code,
@@ -380,7 +383,6 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
         isInterestRecalculationEnabled: [false],
         holdGuaranteeFunds: [false],
         multiDisburseLoan: [false],
-        allowFullTermForTranche: [false],
         allowAttributeConfiguration: [true],
         allowPartialPeriodInterestCalculation: [false],
         allowAttributeOverrides: this.formBuilder.group({
@@ -489,7 +491,9 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
         .get('interestCalculationPeriodType')
         .valueChanges.subscribe((interestCalculationPeriodType: any) => {
           if (interestCalculationPeriodType === 0) {
-            this.loanProductSettingsForm.patchValue({ allowPartialPeriodInterestCalculation: false });
+            this.loanProductSettingsForm.patchValue({
+              allowPartialPeriodInterestCalculation: false
+            });
           }
         });
 
@@ -681,8 +685,7 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
           this.loanProductSettingsForm.removeControl('maxTrancheCount');
           this.loanProductSettingsForm.removeControl('outstandingLoanBalance');
           this.loanProductSettingsForm.patchValue({
-            disallowExpectedDisbursements: false,
-            allowFullTermForTranche: false
+            disallowExpectedDisbursements: false
           });
         }
       });
@@ -752,7 +755,6 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
           this.advancedTransactionProcessingStrategyDisabled = false;
           this.isAdvancedTransactionProcessingStrategy = false;
           this.loanProductSettingsForm.removeControl('chargeOffBehaviour');
-          this.loanProductSettingsForm.patchValue({ allowFullTermForTranche: false });
         } else {
           // Only Advanced Payment Allocation Strategy
           this.transactionProcessingStrategyDataBase.some((cn: CodeName) => {
@@ -818,7 +820,9 @@ export class LoanProductSettingsStepComponent extends LoanProductBaseComponent i
           this.loanProductsTemplate.interestRecalculationData?.disallowInterestCalculationOnPastDue ?? false
       });
     } else if (isControlExists && !shouldControlExists) {
-      this.loanProductSettingsForm.patchValue({ disallowInterestCalculationOnPastDue: undefined });
+      this.loanProductSettingsForm.patchValue({
+        disallowInterestCalculationOnPastDue: undefined
+      });
       this.loanProductSettingsForm.removeControl('disallowInterestCalculationOnPastDue');
     }
   }

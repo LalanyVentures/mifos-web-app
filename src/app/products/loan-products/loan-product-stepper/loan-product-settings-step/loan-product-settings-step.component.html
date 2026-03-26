@@ -23,7 +23,8 @@
           }
         </mat-select>
         <mat-error>
-          {{ 'labels.inputs.products.loan.Amortization' | translate }} {{ 'labels.commons.is' | translate }}
+          {{ 'labels.inputs.products.loan.Amortization' | translate }}
+          {{ 'labels.commons.is' | translate }}
           <strong>{{ 'labels.commons.required' | translate }}</strong>
         </mat-error>
       </mat-form-field>
@@ -35,7 +36,8 @@
           (loanProductSettingsForm.get('npvDayCount')?.touched || loanProductSettingsForm.get('npvDayCount')?.dirty)
         ) {
           <mat-error>
-            {{ 'labels.inputs.Net Present Value day count' | translate }} {{ 'labels.commons.is' | translate }}
+            {{ 'labels.inputs.Net Present Value day count' | translate }}
+            {{ 'labels.commons.is' | translate }}
             <strong>{{ 'labels.commons.required' | translate }}</strong>
           </mat-error>
         }
@@ -55,7 +57,8 @@
           }
         </mat-select>
         <mat-error>
-          {{ 'labels.inputs.products.loan.Amortization' | translate }} {{ 'labels.commons.is' | translate }}
+          {{ 'labels.inputs.products.loan.Amortization' | translate }}
+          {{ 'labels.commons.is' | translate }}
           <strong>{{ 'labels.commons.required' | translate }}</strong>
         </mat-error>
       </mat-form-field>
@@ -74,7 +77,8 @@
           }
         </mat-select>
         <mat-error>
-          {{ 'labels.inputs.Interest Method' | translate }} {{ 'labels.commons.is' | translate }}
+          {{ 'labels.inputs.Interest Method' | translate }}
+          {{ 'labels.commons.is' | translate }}
           <strong>{{ 'labels.commons.required' | translate }}</strong>
         </mat-error>
       </mat-form-field>
@@ -96,7 +100,8 @@
           }
         </mat-select>
         <mat-error>
-          {{ 'labels.inputs.Interest calculation period' | translate }} {{ 'labels.commons.is' | translate }}
+          {{ 'labels.inputs.Interest calculation period' | translate }}
+          {{ 'labels.commons.is' | translate }}
           <strong>{{ 'labels.commons.required' | translate }}</strong>
         </mat-error>
       </mat-form-field>
@@ -117,7 +122,9 @@
       }
       <mat-divider class="flex-98"></mat-divider>
 
-      <h4 class="mat-h4 flex-98">{{ 'labels.inputs.Loan Schedule' | translate }}</h4>
+      <h4 class="mat-h4 flex-98">
+        {{ 'labels.inputs.Loan Schedule' | translate }}
+      </h4>
 
       <mat-form-field class="flex-30">
         <mat-label>{{ 'labels.inputs.Loan Schedule Type' | translate }}</mat-label>
@@ -148,7 +155,8 @@
           }
         </mat-select>
         <mat-error>
-          {{ 'labels.inputs.Repayment strategy' | translate }} {{ 'labels.commons.is' | translate }}
+          {{ 'labels.inputs.Repayment strategy' | translate }}
+          {{ 'labels.commons.is' | translate }}
           <strong>{{ 'labels.commons.required' | translate }}</strong>
         </mat-error>
       </mat-form-field>
@@ -166,7 +174,9 @@
         </mat-form-field>
       }
 
-      <h3 class="mat-h3 flex-96">{{ 'labels.inputs.Loan Tranche Details' | translate }}</h3>
+      <h3 class="mat-h3 flex-96">
+        {{ 'labels.inputs.Loan Tranche Details' | translate }}
+      </h3>
 
       <mat-checkbox
         labelPosition="before"
@@ -190,7 +200,8 @@
             />
             @if (loanProductSettingsForm.controls.maxTrancheCount.hasError('required')) {
               <mat-error>
-                {{ 'labels.inputs.Maximum Tranche count' | translate }} {{ 'labels.commons.is' | translate }}
+                {{ 'labels.inputs.Maximum Tranche count' | translate }}
+                {{ 'labels.commons.is' | translate }}
                 <strong>{{ 'labels.commons.required' | translate }}</strong>
               </mat-error>
             }
@@ -207,20 +218,12 @@
           <mat-checkbox class="flex-48 margin-v" labelPosition="before" formControlName="disallowExpectedDisbursements">
             {{ 'labels.inputs.Disallow Expected Disbursements' | translate }}
           </mat-checkbox>
-          @if (loanProductSettingsForm.value.loanScheduleType === 'PROGRESSIVE') {
-            <mat-checkbox
-              class="flex-48 margin-v"
-              labelPosition="before"
-              formControlName="allowFullTermForTranche"
-              matTooltip="{{ 'tooltips.Allow full term length for each tranche disbursement' | translate }}"
-            >
-              {{ 'labels.inputs.Allow full term for each tranche' | translate }}
-            </mat-checkbox>
-          }
         </div>
       }
 
-      <h3 class="mat-h3 flex-96">{{ 'labels.heading.Down Payment' | translate }}</h3>
+      <h3 class="mat-h3 flex-96">
+        {{ 'labels.heading.Down Payment' | translate }}
+      </h3>
 
       <mat-checkbox
         labelPosition="before"
@@ -247,13 +250,15 @@
             @if (loanProductSettingsForm.controls.disbursedAmountPercentageForDownPayment.hasError('required')) {
               <mat-error>
                 {{ 'labels.inputs.Disbursed Amount Percentage Down Payment' | translate }}
-                {{ 'labels.commons.is' | translate }} <strong>{{ 'labels.commons.required' | translate }}</strong>
+                {{ 'labels.commons.is' | translate }}
+                <strong>{{ 'labels.commons.required' | translate }}</strong>
               </mat-error>
             }
             @if (loanProductSettingsForm.controls.disbursedAmountPercentageForDownPayment.errors?.range) {
               <mat-error>
                 {{ 'labels.inputs.Disbursed Amount Percentage Down Payment' | translate }}
-                {{ 'labels.commons.is' | translate }} {{ 'labels.text.out' | translate }}
+                {{ 'labels.commons.is' | translate }}
+                {{ 'labels.text.out' | translate }}
                 <strong>{{ 'labels.text.percentage range' | translate }}</strong>
               </mat-error>
             }
@@ -276,7 +281,9 @@
       <div class="full-width-flex">
         @if (isAdvancedTransactionProcessingStrategy) {
           <div>
-            <h3 class="mat-h4 flex-98">{{ 'labels.inputs.Loan Charge-off behaviour' | translate }}</h3>
+            <h3 class="mat-h4 flex-98">
+              {{ 'labels.inputs.Loan Charge-off behaviour' | translate }}
+            </h3>
             <mat-form-field class="flex-30">
               <mat-label>{{ 'labels.inputs.Loan Charge-off behaviour' | translate }}</mat-label>
               <mat-select formControlName="chargeOffBehaviour" required>
@@ -370,7 +377,8 @@
           }
         </mat-select>
         <mat-error>
-          {{ 'labels.inputs.Days in year' | translate }} {{ 'labels.commons.is' | translate }}
+          {{ 'labels.inputs.Days in year' | translate }}
+          {{ 'labels.commons.is' | translate }}
           <strong>{{ 'labels.commons.required' | translate }}</strong>
         </mat-error>
       </mat-form-field>
@@ -405,7 +413,8 @@
           }
         </mat-select>
         <mat-error>
-          {{ 'labels.inputs.Days in month' | translate }} {{ 'labels.commons.is' | translate }}
+          {{ 'labels.inputs.Days in month' | translate }}
+          {{ 'labels.commons.is' | translate }}
           <strong>{{ 'labels.commons.required' | translate }}</strong>
         </mat-error>
       </mat-form-field>
@@ -467,12 +476,15 @@
 
       @if (loanProductSettingsForm.value.allowVariableInstallments) {
         <div class="flex-fill layout-row-wrap gap-2percent responsive-column">
-          <h4 class="mat-h4 flex-98">{{ 'labels.inputs.Variable Installments' | translate }}</h4>
+          <h4 class="mat-h4 flex-98">
+            {{ 'labels.inputs.Variable Installments' | translate }}
+          </h4>
           <mat-form-field class="flex-48">
             <mat-label>{{ 'labels.inputs.Minimum gap between Installments' | translate }}</mat-label>
             <input type="number" matInput formControlName="minimumGap" required />
             <mat-error>
-              {{ 'labels.inputs.Minimum gap between Installments' | translate }} {{ 'labels.commons.is' | translate }}
+              {{ 'labels.inputs.Minimum gap between Installments' | translate }}
+              {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
             </mat-error>
           </mat-form-field>
@@ -480,7 +492,8 @@
             <mat-label>{{ 'labels.inputs.Maximum gap between Installments' | translate }}</mat-label>
             <input type="number" matInput formControlName="maximumGap" required />
             <mat-error>
-              {{ 'labels.inputs.Maximum gap between Installments' | translate }} {{ 'labels.commons.is' | translate }}
+              {{ 'labels.inputs.Maximum gap between Installments' | translate }}
+              {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
             </mat-error>
           </mat-form-field>
@@ -498,7 +511,9 @@
 
       <mat-divider class="flex-98"></mat-divider>
 
-      <h3 class="mat-h3 flex-96">{{ 'labels.heading.Interest Recalculation' | translate }}</h3>
+      <h3 class="mat-h3 flex-96">
+        {{ 'labels.heading.Interest Recalculation' | translate }}
+      </h3>
 
       <mat-checkbox class="flex-73 margin-b" labelPosition="before" formControlName="isInterestRecalculationEnabled">
         {{ 'labels.inputs.Recalculate Interest' | translate }}
@@ -534,7 +549,8 @@
               }
             </mat-select>
             <mat-error>
-              {{ 'labels.inputs.Advance payments adjustment type' | translate }} {{ 'labels.commons.is' | translate }}
+              {{ 'labels.inputs.Advance payments adjustment type' | translate }}
+              {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
             </mat-error>
           </mat-form-field>
@@ -578,7 +594,8 @@
                 <input type="number" matInput formControlName="recalculationRestFrequencyInterval" required />
                 <mat-error>
                   {{ 'labels.inputs.Frequency Interval for recalculation' | translate }}
-                  {{ 'labels.commons.is' | translate }} <strong>{{ 'labels.commons.required' | translate }}</strong>
+                  {{ 'labels.commons.is' | translate }}
+                  <strong>{{ 'labels.commons.required' | translate }}</strong>
                 </mat-error>
               </mat-form-field>
             }
@@ -669,7 +686,8 @@
             </mat-select>
             <mat-error>
               {{ 'labels.inputs.Frequency for recalculate Outstanding Principal' | translate }}
-              {{ 'labels.commons.is' | translate }} <strong>{{ 'labels.commons.required' | translate }}</strong>
+              {{ 'labels.commons.is' | translate }}
+              <strong>{{ 'labels.commons.required' | translate }}</strong>
             </mat-error>
           </mat-form-field>
           @if (loanProductSettingsForm.value.recalculationRestFrequencyType === 4) {
@@ -748,7 +766,9 @@
 
       <mat-divider class="flex-98"></mat-divider>
 
-      <h3 class="mat-h3 flex-23">{{ 'labels.heading.Guarantee Requirements' | translate }}</h3>
+      <h3 class="mat-h3 flex-23">
+        {{ 'labels.heading.Guarantee Requirements' | translate }}
+      </h3>
 
       <mat-checkbox class="flex-73 margin-b" labelPosition="before" formControlName="holdGuaranteeFunds">
         {{ 'labels.inputs.Place Guarantee Funds On-Hold' | translate }}
@@ -760,7 +780,8 @@
             <mat-label>{{ 'labels.inputs.Mandatory Guarantee(%)' | translate }}</mat-label>
             <input type="number" matInput formControlName="mandatoryGuarantee" required />
             <mat-error>
-              {{ 'labels.inputs.Mandatory Guarantee' | translate }} {{ 'labels.commons.is' | translate }}
+              {{ 'labels.inputs.Mandatory Guarantee' | translate }}
+              {{ 'labels.commons.is' | translate }}
               <strong>{{ 'labels.commons.required' | translate }}</strong>
             </mat-error>
           </mat-form-field>
@@ -822,7 +843,9 @@
 
     <mat-divider class="flex-98"></mat-divider>
 
-    <h3 class="mat-h3 flex-43">{{ 'labels.inputs.Configurable Terms and Settings' | translate }}</h3>
+    <h3 class="mat-h3 flex-43">
+      {{ 'labels.inputs.Configurable Terms and Settings' | translate }}
+    </h3>
 
     <mat-checkbox labelPosition="before" formControlName="allowAttributeConfiguration" class="margin-b flex-53">
       {{ 'labels.inputs.Allow overriding select terms and settings in loan accounts' | translate }}

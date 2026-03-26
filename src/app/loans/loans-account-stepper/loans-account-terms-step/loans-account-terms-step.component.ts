@@ -263,12 +263,6 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
           this.loansAccountTermsForm.addControl('enableDownPayment', new UntypedFormControl(enableDownPayment));
         }
 
-        if (this.isFullTermTrancheEditable()) {
-          const allowFullTermForTranche =
-            this.loansAccountTermsData.allowFullTermForTranche ?? this.loanProduct?.allowFullTermForTranche ?? false;
-          this.loansAccountTermsForm.patchValue({ allowFullTermForTranche });
-        }
-
         const allowAttributeOverrides = this.loansAccountTermsData.product.allowAttributeOverrides;
         if (!allowAttributeOverrides.repaymentEvery) {
           this.loansAccountTermsForm.controls.repaymentEvery.disable();
@@ -469,7 +463,9 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
     });
 
     this.loansAccountTermsForm.get('loanTermFrequencyType').valueChanges.subscribe((loanTermFrequencyType) => {
-      this.loansAccountTermsForm.patchValue({ repaymentFrequencyType: loanTermFrequencyType });
+      this.loansAccountTermsForm.patchValue({
+        repaymentFrequencyType: loanTermFrequencyType
+      });
     });
 
     this.loansAccountTermsForm.get('amortizationType').valueChanges.subscribe((amortizationType) => {
@@ -576,8 +572,7 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
         multiDisburseLoan: [false],
         interestRateFrequencyType: [''],
         balloonRepaymentAmount: [''],
-        interestRecognitionOnDisbursementDate: [false],
-        allowFullTermForTranche: [false]
+        interestRecognitionOnDisbursementDate: [false]
       });
     } else if (this.loanProductService.isWorkingCapital) {
       this.loansAccountTermsForm = this.formBuilder.group({
@@ -657,7 +652,9 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
       layout: { addButtonText: 'Add' },
       formfields: formfields
     };
-    const disbursementDialogRef = this.dialog.open(FormDialogComponent, { data });
+    const disbursementDialogRef = this.dialog.open(FormDialogComponent, {
+      data
+    });
     disbursementDialogRef.afterClosed().subscribe((response: any) => {
       if (response.data) {
         const principal = response.data.value.principal * 1;
@@ -789,13 +786,5 @@ export class LoansAccountTermsStepComponent extends LoanProductBaseComponent imp
     return {
       collateral: this.collateralDataSource
     };
-  }
-
-  /**
-   * Check if full term tranche option should be visible at loan level.
-   * Available when PROGRESSIVE schedule type and multi-disbursement is enabled.
-   */
-  isFullTermTrancheEditable(): boolean {
-    return this.isProgressive && !!this.multiDisburseLoan;
   }
 }

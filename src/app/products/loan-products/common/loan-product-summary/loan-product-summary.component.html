@@ -83,7 +83,8 @@
       <span class="flex-40">{{ 'labels.inputs.Principal' | translate }}:</span>
       <span class="flex-60"
         >{{ loanProduct.principal | formatNumber }} (Min
-        {{ (loanProduct.minPrincipal ? loanProduct.minPrincipal : loanProduct.principal) | formatNumber }} : Max
+        {{ (loanProduct.minPrincipal ? loanProduct.minPrincipal : loanProduct.principal) | formatNumber }}
+        : Max
         {{ (loanProduct.maxPrincipal ? loanProduct.maxPrincipal : loanProduct.principal) | formatNumber }})
       </span>
     </div>
@@ -198,38 +199,50 @@
       </div>
       @if (loanProduct.principalVariationsForBorrowerCycle?.length) {
         <div class="flex-fill layout-row">
-          <h4 class="mat-h4 flex-fill">{{ 'labels.inputs.Principal by loan cycle' | translate }}</h4>
+          <h4 class="mat-h4 flex-fill">
+            {{ 'labels.inputs.Principal by loan cycle' | translate }}
+          </h4>
           <table
             class="mat-elevation-z1 flex-fill"
             mat-table
             [dataSource]="loanProduct.principalVariationsForBorrowerCycle"
           >
             <ng-container matColumnDef="valueConditionType">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Condition' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Condition' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.valueConditionType.value | translateKey: 'catalogs' }}
               </td>
             </ng-container>
             <ng-container matColumnDef="borrowerCycleNumber">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Loan Cycle' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Loan Cycle' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.borrowerCycleNumber }}
               </td>
             </ng-container>
             <ng-container matColumnDef="minValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Minimum' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Minimum' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.minValue | formatNumber }}
               </td>
             </ng-container>
             <ng-container matColumnDef="defaultValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Default' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Default' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.defaultValue | formatNumber }}
               </td>
             </ng-container>
             <ng-container matColumnDef="maxValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Maximum' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Maximum' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.maxValue | formatNumber }}
               </td>
@@ -241,38 +254,50 @@
       }
       @if (loanProduct.numberOfRepaymentVariationsForBorrowerCycle?.length) {
         <div class="flex-fill">
-          <h4 class="mat-h4 flex-fill">{{ 'labels.inputs.Number of Repayments by loan cycle' | translate }}</h4>
+          <h4 class="mat-h4 flex-fill">
+            {{ 'labels.inputs.Number of Repayments by loan cycle' | translate }}
+          </h4>
           <table
             class="mat-elevation-z1 flex-fill"
             mat-table
             [dataSource]="loanProduct.numberOfRepaymentVariationsForBorrowerCycle"
           >
             <ng-container matColumnDef="valueConditionType">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Condition' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Condition' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.valueConditionType.value | translateKey: 'catalogs' }}
               </td>
             </ng-container>
             <ng-container matColumnDef="borrowerCycleNumber">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Loan Cycle' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Loan Cycle' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.borrowerCycleNumber }}
               </td>
             </ng-container>
             <ng-container matColumnDef="minValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Minimum' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Minimum' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.minValue }}
               </td>
             </ng-container>
             <ng-container matColumnDef="defaultValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Default' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Default' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.defaultValue }}
               </td>
             </ng-container>
             <ng-container matColumnDef="maxValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Maximum' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Maximum' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.maxValue }}
               </td>
@@ -284,38 +309,50 @@
       }
       @if (loanProduct.interestRateVariationsForBorrowerCycle?.length) {
         <div class="flex-fill">
-          <h4 class="mat-h4 flex-fill">{{ 'labels.inputs.Nominal Interest Rate by loan cycle' | translate }}</h4>
+          <h4 class="mat-h4 flex-fill">
+            {{ 'labels.inputs.Nominal Interest Rate by loan cycle' | translate }}
+          </h4>
           <table
             class="mat-elevation-z1 flex-fill"
             mat-table
             [dataSource]="loanProduct.interestRateVariationsForBorrowerCycle"
           >
             <ng-container matColumnDef="valueConditionType">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Condition' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Condition' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.valueConditionType.value | translateKey: 'catalogs' }}
               </td>
             </ng-container>
             <ng-container matColumnDef="borrowerCycleNumber">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Loan Cycle' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Loan Cycle' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.borrowerCycleNumber }}
               </td>
             </ng-container>
             <ng-container matColumnDef="minValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Minimum' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Minimum' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.minValue }}
               </td>
             </ng-container>
             <ng-container matColumnDef="defaultValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Default' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Default' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.defaultValue }}
               </td>
             </ng-container>
             <ng-container matColumnDef="maxValue">
-              <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Maximum' | translate }}</th>
+              <th mat-header-cell *matHeaderCellDef>
+                {{ 'labels.inputs.Maximum' | translate }}
+              </th>
               <td mat-cell *matCellDef="let variation">
                 {{ variation.maxValue }}
               </td>
@@ -349,7 +386,9 @@
         <span class="flex-60">{{ loanProduct.minimumDaysBetweenDisbursalAndFirstRepayment | formatNumber }}</span>
       </div>
     }
-    <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Settings' | translate }}</h3>
+    <h3 class="mat-h3 flex-fill">
+      {{ 'labels.heading.Settings' | translate }}
+    </h3>
     <mat-divider [inset]="true"></mat-divider>
     @if (loanProduct.amortizationType?.value) {
       <div class="flex-fill layout-row">
@@ -400,7 +439,9 @@
         <span class="flex-40">{{ 'labels.inputs.Is interest recognition on disbursement date?' | translate }}:</span>
         <span class="flex-60">{{ loanProduct.interestRecognitionOnDisbursementDate | yesNo }}</span>
       </div>
-      <h3 class="mat-h3 flex-fill">{{ 'labels.inputs.Loan Schedule' | translate }}</h3>
+      <h3 class="mat-h3 flex-fill">
+        {{ 'labels.inputs.Loan Schedule' | translate }}
+      </h3>
       <mat-divider [inset]="true"></mat-divider>
       <div class="flex-fill layout-row">
         <span class="flex-40">{{ 'labels.inputs.Loan Schedule Type' | translate }}:</span>
@@ -458,7 +499,9 @@
           </span>
         </div>
       }
-      <h3 class="mat-h3 flex-fill">{{ 'labels.inputs.Down Payments' | translate }}</h3>
+      <h3 class="mat-h3 flex-fill">
+        {{ 'labels.inputs.Down Payments' | translate }}
+      </h3>
       <mat-divider [inset]="true"></mat-divider>
       <div class="flex-fill layout-row">
         <span class="flex-40">{{ 'labels.inputs.Enable Down Payments' | translate }}:</span>
@@ -478,7 +521,9 @@
       }
       @if (isAdvancedPaymentAllocation) {
         <div class="flex-100 layout-row-wrap responsive-column">
-          <h3 class="mat-h3 flex-100">{{ 'labels.inputs.Loan Charge-off behaviour' | translate }}</h3>
+          <h3 class="mat-h3 flex-100">
+            {{ 'labels.inputs.Loan Charge-off behaviour' | translate }}
+          </h3>
           <mat-divider [inset]="true"></mat-divider>
           <div class="flex-100 layout-row">
             <span class="flex-40">{{ 'labels.inputs.Loan Charge-off behaviour' | translate }}:</span>
@@ -487,7 +532,9 @@
         </div>
       }
     }
-    <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Moratorium' | translate }}</h3>
+    <h3 class="mat-h3 flex-fill">
+      {{ 'labels.heading.Moratorium' | translate }}
+    </h3>
     @if (loanProduct.delinquencyBucket) {
       <div class="flex-fill layout-row">
         <span class="flex-40">{{ 'labels.inputs.Delinquency Bucket' | translate }}:</span>
@@ -605,7 +652,9 @@
         <span class="flex-40">{{ 'labels.inputs.Allowed to be used for providing Topup Loans' | translate }}:</span>
         <span class="flex-60">{{ loanProduct.canUseForTopup | yesNo }}</span>
       </div>
-      <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Interest Recalculation' | translate }}</h3>
+      <h3 class="mat-h3 flex-fill">
+        {{ 'labels.heading.Interest Recalculation' | translate }}
+      </h3>
       <mat-divider [inset]="true"></mat-divider>
       <div class="flex-fill layout-row">
         <span class="flex-40">{{ 'labels.inputs.Recalculate Interest' | translate }}:</span>
@@ -751,7 +800,9 @@
           }
         </div>
       }
-      <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Guarantee Requirements' | translate }}</h3>
+      <h3 class="mat-h3 flex-fill">
+        {{ 'labels.heading.Guarantee Requirements' | translate }}
+      </h3>
       <mat-divider [inset]="true"></mat-divider>
       <div class="flex-fill layout-row">
         <span class="flex-40">{{ 'labels.inputs.Place Guarantee Funds On-Hold' | translate }}:</span>
@@ -775,7 +826,9 @@
           }
         </div>
       }
-      <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Loan Tranche Details' | translate }}</h3>
+      <h3 class="mat-h3 flex-fill">
+        {{ 'labels.heading.Loan Tranche Details' | translate }}
+      </h3>
       <mat-divider [inset]="true"></mat-divider>
       <div class="flex-fill layout-row">
         <span class="flex-40">{{ 'labels.inputs.Enable Multiple Disbursals' | translate }}:</span>
@@ -796,14 +849,10 @@
           <span class="flex-40">{{ 'labels.inputs.Disallow Expected Disbursements' | translate }}:</span>
           <span class="flex-60">{{ loanProduct.disallowExpectedDisbursements | yesNo }}</span>
         </div>
-        @if (loanProduct.loanScheduleType && loanProduct.loanScheduleType.code === 'PROGRESSIVE') {
-          <div class="flex-fill layout-row">
-            <span class="flex-40">{{ 'labels.inputs.Allow full term for each tranche' | translate }}:</span>
-            <span class="flex-60">{{ loanProduct.allowFullTermForTranche | yesNo }}</span>
-          </div>
-        }
       }
-      <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Event Settings' | translate }}</h3>
+      <h3 class="mat-h3 flex-fill">
+        {{ 'labels.heading.Event Settings' | translate }}
+      </h3>
       <div class="flex-100">
         <span class="flex-40"
           >{{
@@ -824,7 +873,9 @@
           <span class="flex-60">{{ loanProduct.overDueDaysForRepaymentEvent | number }}</span>
         </div>
       }
-      <h3 class="mat-h3 flex-fill">{{ 'labels.inputs.Configurable Terms and Settings' | translate }}</h3>
+      <h3 class="mat-h3 flex-fill">
+        {{ 'labels.inputs.Configurable Terms and Settings' | translate }}
+      </h3>
     }
     <mat-divider [inset]="true"></mat-divider>
     <div class="flex-fill layout-row">
@@ -902,7 +953,9 @@
 
     @if (loanProductService.isLoanProduct && loanProduct.charges.length) {
       <div class="flex-fill layout-row-wrap responsive-column">
-        <h3 class="mat-h3 flex-fill">{{ 'labels.heading.Charges' | translate }}</h3>
+        <h3 class="mat-h3 flex-fill">
+          {{ 'labels.heading.Charges' | translate }}
+        </h3>
         <mat-divider [inset]="true"></mat-divider>
         <table
           class="mat-elevation-z1 flex-100"
@@ -910,25 +963,33 @@
           [dataSource]="loanProduct.charges | chargesPenaltyFilter: false"
         >
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Name' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'labels.inputs.Name' | translate }}
+            </th>
             <td mat-cell *matCellDef="let charge">
               {{ charge.name + ', ' + charge.currency.displaySymbol }}
             </td>
           </ng-container>
           <ng-container matColumnDef="chargeCalculationType">
-            <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Charge Type' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'labels.inputs.Charge Type' | translate }}
+            </th>
             <td mat-cell *matCellDef="let charge">
               {{ charge.chargeCalculationType.value | translateKey: 'catalogs' }}
             </td>
           </ng-container>
           <ng-container matColumnDef="amount">
-            <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Amount' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'labels.inputs.Amount' | translate }}
+            </th>
             <td mat-cell *matCellDef="let charge">
               {{ charge.amount | formatNumber }}
             </td>
           </ng-container>
           <ng-container matColumnDef="chargeTimeType">
-            <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Collected On' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'labels.inputs.Collected On' | translate }}
+            </th>
             <td mat-cell *matCellDef="let charge">
               {{ charge.chargeTimeType.value | translateKey: 'catalogs' }}
             </td>
@@ -936,7 +997,9 @@
           <tr mat-header-row *matHeaderRowDef="chargesDisplayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: chargesDisplayedColumns"></tr>
         </table>
-        <h3 class="mat-h3 flex-fill">{{ 'labels.inputs.Overdue Charges' | translate }}</h3>
+        <h3 class="mat-h3 flex-fill">
+          {{ 'labels.inputs.Overdue Charges' | translate }}
+        </h3>
         <mat-divider [inset]="true"></mat-divider>
         <table
           class="mat-elevation-z1 flex-100"
@@ -944,25 +1007,33 @@
           [dataSource]="loanProduct.charges | chargesPenaltyFilter: true"
         >
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Name' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'labels.inputs.Name' | translate }}
+            </th>
             <td mat-cell *matCellDef="let overdueCharge">
               {{ overdueCharge.name + ', ' + overdueCharge.currency.displaySymbol }}
             </td>
           </ng-container>
           <ng-container matColumnDef="chargeCalculationType">
-            <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Charge Type' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'labels.inputs.Charge Type' | translate }}
+            </th>
             <td mat-cell *matCellDef="let overdueCharge">
               {{ overdueCharge.chargeCalculationType.value | translateKey: 'catalogs' }}
             </td>
           </ng-container>
           <ng-container matColumnDef="amount">
-            <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Amount' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'labels.inputs.Amount' | translate }}
+            </th>
             <td mat-cell *matCellDef="let overdueCharge">
               {{ overdueCharge.amount | formatNumber }}
             </td>
           </ng-container>
           <ng-container matColumnDef="chargeTimeType">
-            <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Collected On' | translate }}</th>
+            <th mat-header-cell *matHeaderCellDef>
+              {{ 'labels.inputs.Collected On' | translate }}
+            </th>
             <td mat-cell *matCellDef="let overdueCharge">
               {{ overdueCharge.chargeTimeType.value | translateKey: 'catalogs' }}
             </td>
@@ -974,7 +1045,9 @@
     }
     @if (isAdvancedPaymentAllocation) {
       <div class="flex-100 layout-row-wrap responsive-column">
-        <h3 class="mat-h3 flex-100">{{ 'labels.inputs.Income capitalization' | translate }}</h3>
+        <h3 class="mat-h3 flex-100">
+          {{ 'labels.inputs.Income capitalization' | translate }}
+        </h3>
         <mat-divider [inset]="true"></mat-divider>
         <div class="flex-100 layout-row">
           <span class="flex-40">{{ 'labels.inputs.Enable income capitalization' | translate }}:</span>
@@ -1004,7 +1077,9 @@
     }
     @if (isAdvancedPaymentAllocation) {
       <div class="flex-100 layout-row-wrap responsive-column">
-        <h3 class="mat-h3 flex-100">{{ 'labels.inputs.Buy down fees' | translate }}</h3>
+        <h3 class="mat-h3 flex-100">
+          {{ 'labels.inputs.Buy down fees' | translate }}
+        </h3>
         <mat-divider [inset]="true"></mat-divider>
         <div class="flex-100 layout-row">
           <span class="flex-40">{{ 'labels.inputs.Enable Buy down fee' | translate }}:</span>
@@ -1037,7 +1112,9 @@
       </div>
     }
     @if (loanProductService.isLoanProduct) {
-      <h3 class="mat-h3 flex-100">{{ 'labels.heading.Accounting' | translate }}</h3>
+      <h3 class="mat-h3 flex-100">
+        {{ 'labels.heading.Accounting' | translate }}
+      </h3>
       <mat-divider [inset]="true"></mat-divider>
       <div class="flex-100 layout-row">
         <span class="flex-40">{{ 'labels.inputs.Type' | translate }}:</span>
@@ -1056,7 +1133,8 @@
       @if (isAccountingEnabled()) {
         <div class="flex-100 layout-row-wrap responsive-column">
           <h4 class="mat-h4 flex-100">
-            {{ 'labels.heading.Assets' | translate }} / {{ 'labels.heading.Liabilities' | translate }}
+            {{ 'labels.heading.Assets' | translate }} /
+            {{ 'labels.heading.Liabilities' | translate }}
           </h4>
           <div class="flex-100 layout-row-wrap responsive-column">
             <mifosx-gl-account-display
@@ -1067,7 +1145,9 @@
             >
             </mifosx-gl-account-display>
           </div>
-          <h4 class="mat-h4 flex-100">{{ 'labels.heading.Assets' | translate }}</h4>
+          <h4 class="mat-h4 flex-100">
+            {{ 'labels.heading.Assets' | translate }}
+          </h4>
           <div class="flex-100 layout-row-wrap responsive-column">
             <mifosx-gl-account-display
               class="flex-100"
@@ -1109,7 +1189,9 @@
             >
             </mifosx-gl-account-display>
           </div>
-          <h4 class="mat-h4 flex-100">{{ 'labels.heading.Income' | translate }}</h4>
+          <h4 class="mat-h4 flex-100">
+            {{ 'labels.heading.Income' | translate }}
+          </h4>
           <mifosx-gl-account-display
             class="flex-100"
             [accountTitle]="'Income from Interest'"
@@ -1183,7 +1265,9 @@
             >
             </mifosx-gl-account-display>
           }
-          <h4 class="mat-h4 flex-100">{{ 'labels.heading.Expenses' | translate }}</h4>
+          <h4 class="mat-h4 flex-100">
+            {{ 'labels.heading.Expenses' | translate }}
+          </h4>
           <div class="flex-fill layout-row-wrap responsive-column">
             <mifosx-gl-account-display
               class="flex-100"
@@ -1226,7 +1310,9 @@
               >
               </mifosx-gl-account-display>
             }
-            <h4 class="mat-h4 flex-fill">{{ 'labels.heading.Liabilities' | translate }}</h4>
+            <h4 class="mat-h4 flex-fill">
+              {{ 'labels.heading.Liabilities' | translate }}
+            </h4>
             <mifosx-gl-account-display
               class="flex-100"
               [accountTitle]="'Over payment liability'"
@@ -1245,7 +1331,9 @@
             }
             @if (isAdvancedAccountingEnabled()) {
               <div class="flex-fill layout-row-wrap responsive-column">
-                <h3 class="mat-h3 flex-100">{{ 'labels.heading.Advanced Accounting Rules' | translate }}</h3>
+                <h3 class="mat-h3 flex-100">
+                  {{ 'labels.heading.Advanced Accounting Rules' | translate }}
+                </h3>
                 <mat-divider [inset]="true"></mat-divider>
                 @if (paymentChannelToFundSourceMappings?.length > 0) {
                   <div class="flex-100 layout-row-wrap responsive-column">
@@ -1258,13 +1346,17 @@
                       [dataSource]="paymentChannelToFundSourceMappings"
                     >
                       <ng-container matColumnDef="paymentTypeId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.heading.Payment Type' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.heading.Payment Type' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let paymentFundSource">
                           {{ paymentFundSource.paymentType.name }}
                         </td>
                       </ng-container>
                       <ng-container matColumnDef="fundSourceAccountId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Fund Source' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Fund Source' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let paymentFundSource">
                           {{ paymentFundSource.fundSourceAccount.name }}
                         </td>
@@ -1281,13 +1373,17 @@
                     </h4>
                     <table class="mat-elevation-z1 flex-100" mat-table [dataSource]="feeToIncomeAccountMappings">
                       <ng-container matColumnDef="chargeId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.catalogs.Fees' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.catalogs.Fees' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let feesIncome">
                           {{ feesIncome.charge.name }}
                         </td>
                       </ng-container>
                       <ng-container matColumnDef="incomeAccountId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Income Account' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Income Account' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let feesIncome">
                           @if (feesIncome.incomeAccount) {
                             <span>
@@ -1308,13 +1404,17 @@
                     </h4>
                     <table class="mat-elevation-z1 flex-100" mat-table [dataSource]="penaltyToIncomeAccountMappings">
                       <ng-container matColumnDef="chargeId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Penalty' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Penalty' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let penaltyIncome">
                           {{ penaltyIncome.charge.name }}
                         </td>
                       </ng-container>
                       <ng-container matColumnDef="incomeAccountId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Income Account' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Income Account' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let penaltyIncome">
                           {{ penaltyIncome.incomeAccount.name }}
                         </td>
@@ -1335,13 +1435,17 @@
                       [dataSource]="chargeOffReasonToExpenseAccountMappings"
                     >
                       <ng-container matColumnDef="chargeOffReasonCodeValueId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Charge-off reason' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Charge-off reason' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let chargeOffReasonToExpenseAccountMapping">
                           {{ chargeOffReasonToExpenseAccountMapping.reasonCodeValue.name }}
                         </td>
                       </ng-container>
                       <ng-container matColumnDef="expenseAccountId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Expense Account' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Expense Account' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let chargeOffReasonToExpenseAccountMapping">
                           ({{ chargeOffReasonToExpenseAccountMapping.expenseAccount.glCode }})
                           {{ chargeOffReasonToExpenseAccountMapping.expenseAccount.name }}
@@ -1362,13 +1466,17 @@
                     [dataSource]="buydownFeeClassificationToIncomeAccountMappings"
                   >
                     <ng-container matColumnDef="chargeOffReasonCodeValueId">
-                      <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Classification' | translate }}</th>
+                      <th mat-header-cell *matHeaderCellDef>
+                        {{ 'labels.inputs.Classification' | translate }}
+                      </th>
                       <td mat-cell *matCellDef="let classificationToIncomeAccountMapping">
                         {{ classificationToIncomeAccountMapping.classificationCodeValue.name }}
                       </td>
                     </ng-container>
                     <ng-container matColumnDef="expenseAccountId">
-                      <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Income Account' | translate }}</th>
+                      <th mat-header-cell *matHeaderCellDef>
+                        {{ 'labels.inputs.Income Account' | translate }}
+                      </th>
                       <td mat-cell *matCellDef="let classificationToIncomeAccountMapping">
                         ({{ classificationToIncomeAccountMapping.incomeAccount.glCode }})
                         {{ classificationToIncomeAccountMapping.incomeAccount.name }}
@@ -1389,13 +1497,17 @@
                       [dataSource]="capitalizedIncomeClassificationToIncomeAccountMappings"
                     >
                       <ng-container matColumnDef="chargeOffReasonCodeValueId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Classification' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Classification' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let capitalizedIncomeClassificationToIncomeAccountMapping">
                           {{ capitalizedIncomeClassificationToIncomeAccountMapping.classificationCodeValue.name }}
                         </td>
                       </ng-container>
                       <ng-container matColumnDef="expenseAccountId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Income Account' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Income Account' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let capitalizedIncomeClassificationToIncomeAccountMapping">
                           ({{ capitalizedIncomeClassificationToIncomeAccountMapping.incomeAccount.glCode }})
                           {{ capitalizedIncomeClassificationToIncomeAccountMapping.incomeAccount.name }}
@@ -1413,13 +1525,17 @@
                     </h4>
                     <table class="mat-elevation-z1 flex-100" mat-table [dataSource]="writeOffReasonsToExpenseMappings">
                       <ng-container matColumnDef="chargeOffReasonCodeValueId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.WriteOff Reason' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.WriteOff Reason' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let writeOffReasonsToExpenseMapping">
                           {{ writeOffReasonsToExpenseMapping.reasonCodeValue.name }}
                         </td>
                       </ng-container>
                       <ng-container matColumnDef="expenseAccountId">
-                        <th mat-header-cell *matHeaderCellDef>{{ 'labels.inputs.Expense Account' | translate }}</th>
+                        <th mat-header-cell *matHeaderCellDef>
+                          {{ 'labels.inputs.Expense Account' | translate }}
+                        </th>
                         <td mat-cell *matCellDef="let writeOffReasonsToExpenseMapping">
                           ({{ writeOffReasonsToExpenseMapping.expenseAccount.glCode }})
                           {{ writeOffReasonsToExpenseMapping.expenseAccount.name }}

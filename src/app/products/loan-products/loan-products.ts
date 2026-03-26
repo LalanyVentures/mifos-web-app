@@ -76,7 +76,9 @@ export class LoanProducts {
     const loanProduct = this.loanProductService.isLoanProduct
       ? {
           ...loanProductData,
-          charges: loanProductData.charges.map((charge: any) => ({ id: charge.id })),
+          charges: loanProductData.charges.map((charge: any) => ({
+            id: charge.id
+          })),
           dateFormat,
           locale
         }
@@ -93,6 +95,8 @@ export class LoanProducts {
     // allowPartialPeriodInterestCalculation. Until that is fixed, we need to replace the field name in the payload.
     loanProduct.allowPartialPeriodInterestCalculation = loanProduct.allowPartialPeriodInterestCalculation;
     delete loanProduct.allowPartialPeriodInterestCalculation;
+    // Older Fineract deployments reject this newer field on loan product create/update.
+    delete loanProduct.allowFullTermForTranche;
 
     // Set Default values If they were not set
     if (this.loanProductService.isLoanProduct) {
