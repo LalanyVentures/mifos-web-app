@@ -791,6 +791,8 @@ export class LoansService {
     if (!loansAccountData.multiDisburseLoan) {
       delete loansAccountData.disbursementData;
     }
+    // Older Fineract deployments reject this newer field on loan creation.
+    delete loansAccountData.allowFullTermForTranche;
     delete loansAccountData.isValid;
     loansAccountData.principal = loansAccountData.principalAmount;
     delete loansAccountData.principalAmount;
