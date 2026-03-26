@@ -412,6 +412,7 @@ export class RunReportComponent implements OnInit {
   run() {
     this.isCollapsed = true;
     const userResponseValues = this.formatUserResponse(this.reportForm.value);
+    const activeFilters = this.buildActiveFilters();
     let formData = {
       ...userResponseValues
     };
@@ -432,7 +433,8 @@ export class RunReportComponent implements OnInit {
     this.dataObject = {
       formData: formData,
       report: this.report,
-      decimalChoice: this.decimalChoice.value
+      decimalChoice: this.decimalChoice.value,
+      activeFilters
     };
     switch (this.report.type) {
       case 'SMS':

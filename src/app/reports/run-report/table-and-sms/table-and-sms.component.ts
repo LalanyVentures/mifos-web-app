@@ -171,7 +171,8 @@ export class TableAndSmsComponent implements OnChanges {
   }
 
   exportToXLS(): void {
-    const fileName = `${this.dataObject.report.name}.xlsx`;
+    const generatedAt = new Date();
+    const fileName = `${this.dataObject.report.name}-${this.formatTimestampForFileName(generatedAt)}.xlsx`;
     const data = this.csvData.map((object: any) => {
       const row: { [key: string]: any } = {};
       for (let i = 0; i < this.displayedColumns.length; i++) {
@@ -182,13 +183,51 @@ export class TableAndSmsComponent implements OnChanges {
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Report');
+    const totalColumns = Math.max(this.displayedColumns.length, 2, 1);
+    const activeFilters = this.dataObject.activeFilters ?? [];
 
-    // Add header row
-    worksheet.addRow(this.displayedColumns);
+    worksheet.mergeCells(1, 1, 1, totalColumns);
+    const titleCell = worksheet.getCell(1, 1);
+    titleCell.value = this.dataObject.report.name;
+    titleCell.font = { bold: true, size: 16 };
 
-    // Add data rows
+    const metadataRowValues: string[] = [
+      'Generated At',
+      generatedAt.toLocaleString()
+    ];
+    activeFilters.forEach((filter: { label: string; value: string }) => {
+      metadataRowValues.push(filter.label, filter.value);
+    });
+    const metadataRow = worksheet.addRow(metadataRowValues);
+    metadataRow.eachCell((cell, columnNumber) => {
+      if (columnNumber % 2 === 1) {
+        cell.font = { bold: true };
+      }
+    });
+
+    worksheet.addRow([]);
+
+    const headerRow = worksheet.addRow(this.displayedColumns);
+    headerRow.font = { bold: true };
+
     data.forEach((rowObj: any) => {
       worksheet.addRow(this.displayedColumns.map((col) => rowObj[col]));
+    });
+
+    worksheet.views = [
+      {
+        state: 'frozen',
+        ySplit: 4
+      }
+    ];
+
+    worksheet.columns.forEach((column) => {
+      let maxLength = 10;
+      column.eachCell?.({ includeEmpty: true }, (cell) => {
+        const cellValue = cell.value ? String(cell.value) : '';
+        maxLength = Math.max(maxLength, cellValue.length + 2);
+      });
+      column.width = Math.min(maxLength, 40);
     });
 
     workbook.xlsx.writeBuffer().then((buffer: any) => {
@@ -196,10 +235,21 @@ export class TableAndSmsComponent implements OnChanges {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'filename.xlsx';
+      a.download = fileName;
       a.click();
       URL.revokeObjectURL(url);
     });
+  }
+
+  private formatTimestampForFileName(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${year}${month}${day}-${hours}${minutes}${seconds}`;
   }
 
   /**
