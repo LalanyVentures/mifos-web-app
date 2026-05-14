@@ -99,6 +99,8 @@ export class LoanActionButtonResolver {
       return this.loansService.getLoanActionTemplate(loanId, 'reAmortization');
     } else if (loanActionButton === 'Attach Loan Originator') {
       return this.organizationService.getLoanOriginators();
+    } else if (loanActionButton === 'Update discount') {
+      return this.loansService.getWorkingCapitalLoanDetails(loanId);
     } else {
       return undefined;
     }

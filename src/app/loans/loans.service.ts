@@ -16,6 +16,14 @@ import { Dates } from 'app/core/utils/dates';
 import { SettingsService } from 'app/settings/settings.service';
 import { DisbursementData } from './models/loan-account.model';
 
+export interface WorkingCapitalLoanDiscountUpdateRequest {
+  transactionAmount: number;
+  relatedResourceId: number;
+  note?: string;
+  locale: string;
+  dateFormat: string;
+}
+
 /**
  * Loans service.
  */
@@ -122,12 +130,12 @@ export class LoansService {
     return this.http.get(`/loans/${loanId}`, { params: httpParams });
   }
 
-  getDelinquencyActions(loanId: string) {
-    return this.http.get(`/loans/${loanId}/delinquency-actions`);
+  getDelinquencyActions(productType: string, loanId: string) {
+    return this.http.get(`/${productType}/${loanId}/delinquency-actions`);
   }
 
-  createDelinquencyActions(loanId: string, delinquencyActions: any) {
-    return this.http.post(`/loans/${loanId}/delinquency-actions`, delinquencyActions);
+  createDelinquencyActions(productType: string, loanId: string, delinquencyActions: any) {
+    return this.http.post(`/${productType}/${loanId}/delinquency-actions`, delinquencyActions);
   }
 
   getDeferredIncomeData(loanId: string) {
@@ -136,6 +144,14 @@ export class LoansService {
 
   getBuyDownFeeData(loanId: string): Observable<any> {
     return this.http.get(`/loans/${loanId}/buydown-fees`);
+  }
+
+  getWorkingCapitalLoanDelinquencyRangeSchedule(loanId: string) {
+    return this.http.get(`/working-capital-loans/${loanId}/delinquency-range-schedule`);
+  }
+
+  getWorkingCapitalLoanAmortizationSchedule(loanId: string) {
+    return this.http.get(`/working-capital-loans/${loanId}/amortization-schedule`);
   }
 
   /**
@@ -203,7 +219,7 @@ export class LoansService {
     return this.http.get(`/loans/${loanId}`, { params: httpParams });
   }
 
-  getWorkingCapitalLoannDetails(loanId: string) {
+  getWorkingCapitalLoanDetails(loanId: string) {
     const httpParams = new HttpParams().set('associations', 'all');
     return this.http.get(`/working-capital-loans/${loanId}`, { params: httpParams });
   }
@@ -536,8 +552,8 @@ export class LoansService {
     return this.http.get(`/standinginstructions`, { params: httpParams });
   }
 
-  updateLoansAccount(loanId: any, loanData: any): Observable<any> {
-    return this.http.put(`/loans/${loanId}`, loanData);
+  updateLoansAccount(productType: string, loanId: any, loanData: any): Observable<any> {
+    return this.http.put(`/${productType}/${loanId}`, loanData);
   }
 
   getTemplateData(templateId: any, loanId: any): Observable<any> {
@@ -830,5 +846,19 @@ export class LoansService {
   getEntityDataTableChecks(offset: number = 0, limit: number = -1): Observable<any> {
     const httpParams = new HttpParams().set('offset', offset.toString()).set('limit', limit.toString());
     return this.http.get('/entityDatatableChecks', { params: httpParams });
+  }
+
+  /**
+   * Returns the Working Capital Loan Payment Rates data
+   */
+  getWorkingCapitalPeriodPaymentRates(loanId: any) {
+    return this.http.get(`/working-capital-loans/${loanId}/rate-changes`);
+  }
+
+  /**
+   * Add a Working Capital Loan Payment Rates
+   */
+  addWorkingCapitalPeriodPaymentRate(loanId: any, payload: any) {
+    return this.http.put(`/working-capital-loans/${loanId}/payment-rate`, payload);
   }
 }

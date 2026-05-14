@@ -7,7 +7,7 @@
  */
 
 /** Angular Imports. */
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
@@ -23,6 +23,7 @@ import { OrganizationService } from 'app/organization/organization.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { AlertService } from 'app/core/alert/alert.service';
+import { TranslateService } from '@ngx-translate/core';
 
 /**
  * Edit Holiday component.
@@ -33,7 +34,8 @@ import { AlertService } from 'app/core/alert/alert.service';
   styleUrls: ['./edit-holiday.component.scss'],
   imports: [
     ...STANDALONE_SHARED_IMPORTS
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditHolidayComponent implements OnInit {
   private alertService = inject(AlertService);
@@ -43,6 +45,7 @@ export class EditHolidayComponent implements OnInit {
   private organizatioService = inject(OrganizationService);
   private settingsService = inject(SettingsService);
   private router = inject(Router);
+  private translateService = inject(TranslateService);
 
   /** Edit Holiday form. */
   holidayForm: UntypedFormGroup;
@@ -154,8 +157,8 @@ export class EditHolidayComponent implements OnInit {
       const toDate = coerceDate(this.holidayForm.value.toDate);
       if (!fromDate || !toDate) {
         this.alertService.alert({
-          type: 'Error',
-          message: 'Invalid date selected. Please select a valid date.'
+          type: this.translateService.instant('errors.http.default.title'),
+          message: this.translateService.instant('errors.holiday.invalidDate')
         });
         return;
       }
@@ -165,8 +168,8 @@ export class EditHolidayComponent implements OnInit {
         const repaymentsRescheduledTo = coerceDate(this.holidayForm.value.repaymentsRescheduledTo);
         if (!repaymentsRescheduledTo) {
           this.alertService.alert({
-            type: 'Error',
-            message: 'Invalid repayment rescheduled date. Please select a valid date.'
+            type: this.translateService.instant('errors.http.default.title'),
+            message: this.translateService.instant('errors.holiday.invalidRepaymentDate')
           });
           return;
         }

@@ -6,13 +6,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DateFormatPipe } from '../../../pipes/date-format.pipe';
 import { FormatNumberPipe } from '../../../pipes/format-number.pipe';
 import { YesnoPipe } from '../../../pipes/yesno.pipe';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
+import { BreachDisplayComponent } from 'app/shared/loan/breach-display/breach-display.component';
 
 @Component({
   selector: 'mifosx-account-details',
@@ -22,8 +23,10 @@ import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan
     ...STANDALONE_SHARED_IMPORTS,
     DateFormatPipe,
     FormatNumberPipe,
-    YesnoPipe
-  ]
+    YesnoPipe,
+    BreachDisplayComponent
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AccountDetailsComponent extends LoanProductBaseComponent {
   private route = inject(ActivatedRoute);

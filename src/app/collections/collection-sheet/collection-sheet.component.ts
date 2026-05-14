@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { CollectionsService } from '../collections.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,7 +28,8 @@ import { Logger } from 'app/core/logger/logger.service';
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     FaIconComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CollectionSheetComponent implements OnInit {
   private readonly log = new Logger('CollectionSheetComponent');
@@ -133,17 +134,19 @@ export class CollectionSheetComponent implements OnInit {
       .subscribe((response: CollectionSheetData[]) => {
         if (response.length > 0) {
           this.meetingFallCenters = response[0].meetingFallCenters;
-          const payload = {
-            calendarId: this.meetingFallCenters[0].collectionMeetingCalendar.calendarInstanceId,
-            transactionDate: meetingDate,
-            locale,
-            dateFormat
-          };
-          this.collectionsService
-            .generateCollectionSheetData(this.meetingFallCenters[0].id, payload)
-            .subscribe((jlgGroupData: JLGGroupData) => {
-              this.log.debug('JLG Group Data:', jlgGroupData);
-            });
+          if (this.meetingFallCenters?.length > 0) {
+            const payload = {
+              calendarId: this.meetingFallCenters[0].collectionMeetingCalendar?.calendarInstanceId,
+              transactionDate: meetingDate,
+              locale,
+              dateFormat
+            };
+            this.collectionsService
+              .generateCollectionSheetData(this.meetingFallCenters[0].id, payload)
+              .subscribe((jlgGroupData: JLGGroupData) => {
+                this.log.debug('JLG Group Data:', jlgGroupData);
+              });
+          }
         }
       });
   }

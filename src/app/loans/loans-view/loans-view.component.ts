@@ -7,7 +7,7 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, NavigationExtras, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -75,7 +75,8 @@ import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan
     StatusLookupPipe,
     DateFormatPipe,
     FormatNumberPipe
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoansViewComponent extends LoanProductBaseComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -257,12 +258,19 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
       return;
     }
     this.buttonConfig = new LoansAccountButtonConfiguration(this.status, this.loanSubStatus);
+    if (this.canShowWorkingCapitalDiscountUpdate()) {
+      this.buttonConfig.addButton({
+        name: 'Update discount',
+        icon: 'edit',
+        taskPermissionName: 'UPDATEDISCOUNT_WORKINGCAPITALLOAN'
+      });
+    }
 
     if (this.status === 'Submitted and pending approval') {
       this.buttonConfig.addOption({
         name: this.loanDetailsData.loanOfficerName ? 'Change Loan Officer' : 'Assign Loan Officer',
         icon: 'user-tie',
-        taskPermissionName: 'DISBURSE_LOAN'
+        taskPermissionName: 'UPDATELOANOFFICER_LOAN'
       });
 
       if (this.loanDetailsData.isVariableInstallmentsAllowed) {
@@ -276,7 +284,7 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
       this.buttonConfig.addButton({
         name: this.loanDetailsData.loanOfficerName ? 'Change Loan Officer' : 'Assign Loan Officer',
         icon: 'user-tie',
-        taskPermissionName: 'DISBURSE_LOAN'
+        taskPermissionName: 'UPDATELOANOFFICER_LOAN'
       });
     } else if (this.status === 'Active') {
       if (this.loanDetailsData.enableBuyDownFee) {
@@ -462,6 +470,9 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
       }
     });
     recoverFromGuarantorDialogRef.afterClosed().subscribe((response: any) => {
+      if (!response) {
+        return;
+      }
       if (response.confirm) {
         this.loansService.loanActionButtons(this.loanId, 'recoverGuarantees').subscribe(() => {
           this.reload();
@@ -493,6 +504,9 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
       }
     });
     undoTransactionAccountDialogRef.afterClosed().subscribe((response: any) => {
+      if (!response) {
+        return;
+      }
       if (response.confirm) {
         let undoCommand: string = '';
         switch (actionName) {
@@ -517,14 +531,20 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
     if (!this.loanDetailsData) {
       return '';
     }
-    if (this.loanDetailsData.chargedOff) {
-      return 'loanStatusType.chargeoff';
-    }
-    if (this.isContractTermination(this.loanSubStatus)) {
-      return 'loanSubStatusType.contractTermination';
-    }
-    if (this.loanDetailsData.inArrears) {
-      return 'loanStatusType.activeOverdue';
+    if (this.loanProductService.isLoanProduct) {
+      if (this.loanDetailsData.chargedOff) {
+        return 'loanStatusType.chargeoff';
+      }
+      if (this.isContractTermination(this.loanSubStatus)) {
+        return 'loanSubStatusType.contractTermination';
+      }
+      if (this.loanDetailsData.inArrears) {
+        return 'loanStatusType.activeOverdue';
+      }
+    } else if (this.loanProductService.isWorkingCapital) {
+      if (this.loanDetailsData.collectionData?.delinquentDays > 0) {
+        return 'loanStatusType.activeOverdue';
+      }
     }
     return this.loanDetailsData.status?.code;
   }
@@ -536,8 +556,14 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
     if (this.loanDetailsData.chargedOff) {
       return 'Chargeoff';
     }
-    if (this.loanDetailsData.inArrears) {
-      return 'activeOverdue';
+    if (this.loanProductService.isWorkingCapital) {
+      if (this.loanDetailsData.collectionData?.delinquentDays > 0) {
+        return 'activeOverdue';
+      }
+    } else {
+      if (this.loanDetailsData.inArrears) {
+        return 'activeOverdue';
+      }
     }
     return this.loanDetailsData.status?.code;
   }
@@ -557,6 +583,9 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
       data: { deleteContext: `with loan id: ${this.loanId}` }
     });
     deleteGuarantorDialogRef.afterClosed().subscribe((response: any) => {
+      if (!response) {
+        return;
+      }
       if (response.delete) {
         this.loansService.deleteLoanAccount(this.loanId).subscribe(() => {
           this.router.navigate(['../../'], { relativeTo: this.route });
@@ -570,5 +599,12 @@ export class LoansViewComponent extends LoanProductBaseComponent implements OnIn
       return false;
     }
     return substatus.code === 'loanSubStatus.loanSubStatusType.contractTermination';
+  }
+
+  private canShowWorkingCapitalDiscountUpdate(): boolean {
+    if (!this.loanProductService.isWorkingCapital || !this.loanDetailsData) {
+      return false;
+    }
+    return !this.loanDetailsData?.discount && this.loanDetailsData?.status?.active === true;
   }
 }

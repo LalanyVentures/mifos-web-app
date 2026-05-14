@@ -7,7 +7,16 @@
  */
 
 /** Angular Imports */
-import { AfterViewInit, ChangeDetectorRef, Component, QueryList, ViewChild, ViewChildren, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  QueryList,
+  ViewChild,
+  ViewChildren,
+  inject
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 /** Custom Services */
@@ -49,7 +58,8 @@ import { Dates } from 'app/core/utils/dates';
     LoansAccountScheduleStepComponent,
     LoansAccountDatatableStepComponent,
     LoansAccountPreviewStepComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateLoansAccountComponent extends LoanProductBaseComponent implements AfterViewInit {
   private route = inject(ActivatedRoute);
@@ -122,9 +132,12 @@ export class CreateLoansAccountComponent extends LoanProductBaseComponent implem
     if (templateData.loanData) {
       this.loansAccountProductTemplate = templateData.loanData;
       this.loansAccountProductTemplate.options = {
+        breachOptions: templateData.breachOptions,
+        nearBreachOptions: templateData.nearBreachOptions,
         delinquencyBucketOptions: templateData.delinquencyBucketOptions,
         fundOptions: templateData.fundOptions,
-        periodFrequencyTypeOptions: templateData.periodFrequencyTypeOptions
+        periodFrequencyTypeOptions: templateData.periodFrequencyTypeOptions,
+        delinquencyStartTypeOptions: templateData.delinquencyStartTypeOptions
       };
     }
     this.currencyCode = this.loansAccountProductTemplate.currency.code;
@@ -288,7 +301,24 @@ export class CreateLoansAccountComponent extends LoanProductBaseComponent implem
       ) {
         delete payload['discount'];
       }
+      if (
+        !Object.hasOwn(this.productDetails.allowAttributeOverrides, 'breach') ||
+        this.productDetails.allowAttributeOverrides.breach === false
+      ) {
+        delete payload['breachId'];
+        delete payload['nearBreachId'];
+      }
     }
+
+    // No Empty values to be sent
+    [
+      'delinquencyGraceDays',
+      'delinquencyStartType'
+    ].forEach((attr: string) => {
+      if (payload[attr] === null || payload[attr] === '') {
+        delete payload[attr];
+      }
+    });
 
     this.loansService
       .createLoansAccount(this.loanProductService.loanAccountPath, payload)

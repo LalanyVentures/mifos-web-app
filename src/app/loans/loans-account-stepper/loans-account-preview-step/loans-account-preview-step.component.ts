@@ -7,7 +7,15 @@
  */
 
 /** Angular Imports */
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges
+} from '@angular/core';
 import {
   MatTableDataSource,
   MatTable,
@@ -35,6 +43,8 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 import { LoanProductBaseComponent } from 'app/products/loan-products/common/loan-product-base.component';
 import { LoanProductBasicDetails } from 'app/loans/models/loan-product.model';
 import { LongTextComponent } from 'app/shared/long-text/long-text.component';
+import { Breach, NearBreach } from 'app/products/loan-products/models/loan-product.model';
+import { BreachDisplayComponent } from 'app/shared/loan/breach-display/breach-display.component';
 
 /**
  * Create Loans Account Preview Step
@@ -65,8 +75,10 @@ import { LongTextComponent } from 'app/shared/long-text/long-text.component';
     FormatNumberPipe,
     YesnoPipe,
     TranslatePipe,
-    LongTextComponent
-  ]
+    LongTextComponent,
+    BreachDisplayComponent
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoansAccountPreviewStepComponent extends LoanProductBaseComponent implements OnChanges {
   /** Loans Account Template */
@@ -144,7 +156,31 @@ export class LoansAccountPreviewStepComponent extends LoanProductBaseComponent i
     return this.loanProductService.loanProductTypeLabel;
   }
 
+  fundName(fundId: number): string {
+    const fundOptions = this.loanProductService.isLoanProduct
+      ? this.loansAccountProductTemplate.fundOptions
+      : this.loansAccountProductTemplate.options.fundOptions;
+    const fund = fundOptions.find((fund: any) => fund.id === fundId);
+    return fund ? fund.name : '';
+  }
+
   camalize(word: string) {
     return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }
+
+  getBreach(breachId: number | null | undefined): Breach | null {
+    if (breachId === null || breachId === undefined) {
+      return null;
+    }
+    return this.loansAccountProductTemplate.options.breachOptions?.find((b: Breach) => b.id === breachId) || null;
+  }
+
+  getNearBreach(nearBreachId: number | null | undefined): NearBreach | null {
+    if (nearBreachId === null || nearBreachId === undefined) {
+      return null;
+    }
+    return (
+      this.loansAccountProductTemplate.options.nearBreachOptions?.find((b: NearBreach) => b.id === nearBreachId) || null
+    );
   }
 }

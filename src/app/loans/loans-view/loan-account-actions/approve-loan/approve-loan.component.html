@@ -34,7 +34,8 @@
             <mat-label>{{ 'labels.inputs.Expected disbursement on' | translate }}</mat-label>
             <input
               matInput
-              [min]="minDate"
+              [min]="approveLoanForm.value.approvedOnDate"
+              [max]="maxDate"
               [matDatepicker]="disbursementDatePicker"
               required
               formControlName="expectedDisbursementDate"
@@ -58,7 +59,14 @@
               <input matInput [value]="loanData.availableDisbursementAmountWithOverApplied | formatNumber" readonly />
             </mat-form-field>
           }
-
+          @if (isWorkingCapital) {
+            <mifosx-input-amount
+              [currency]="currency"
+              [inputFormControl]="approveLoanForm.controls.discountAmount"
+              [inputLabel]="'Discount'"
+            >
+            </mifosx-input-amount>
+          }
           <mat-form-field>
             <mat-label>{{ 'labels.inputs.Note' | translate }}</mat-label>
             <textarea matInput formControlName="note" cdkTextareaAutosize cdkAutosizeMinRows="2"></textarea>

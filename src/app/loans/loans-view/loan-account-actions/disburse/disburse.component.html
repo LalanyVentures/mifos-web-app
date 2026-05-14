@@ -46,6 +46,14 @@
               <input matInput [value]="dataObject.availableDisbursementAmountWithOverApplied | formatNumber" readonly />
             </mat-form-field>
           }
+          @if (isWorkingCapital) {
+            <mifosx-input-amount
+              [currency]="currency"
+              [inputFormControl]="disbursementLoanForm.controls.discountAmount"
+              [inputLabel]="'Discount'"
+            >
+            </mifosx-input-amount>
+          }
 
           <mat-form-field>
             <mat-label>{{ 'labels.inputs.External Id' | translate }}</mat-label>
@@ -109,7 +117,7 @@
           <button
             mat-raised-button
             color="primary"
-            [disabled]="!disbursementLoanForm.valid"
+            [disabled]="!disbursementLoanForm.valid || isSubmitting"
             *mifosxHasPermission="'DISBURSE_LOAN'"
           >
             {{ 'labels.buttons.Submit' | translate }}

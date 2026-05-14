@@ -7,7 +7,7 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, Input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Input, inject } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -15,6 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { LoansService } from 'app/loans/loans.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { AlertService } from 'app/core/alert/alert.service';
+import { TranslateService } from '@ngx-translate/core';
 import { Dates } from 'app/core/utils/dates';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
@@ -30,12 +31,14 @@ import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.co
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     CdkTextareaAutosize
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UndoWriteOffComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
   private dateUtils = inject(Dates);
   private alertService = inject(AlertService);
+  private translateService = inject(TranslateService);
 
   /** Minimum Date allowed. */
   minDate = new Date(2000, 0, 1);
@@ -87,9 +90,8 @@ export class UndoWriteOffComponent extends LoanAccountActionsBaseComponent imple
       error: (error) => {
         console.error('Undo write-off failed:', error);
         this.alertService.alert({
-          type: 'Undo Write-off Failed',
-          message:
-            'An error occurred while processing the undo write-off transaction. Please try again or contact support if the problem persists.'
+          type: this.translateService.instant('errors.loans.undoWriteOff.type'),
+          message: this.translateService.instant('errors.loans.undoWriteOff.message')
         });
       }
     });

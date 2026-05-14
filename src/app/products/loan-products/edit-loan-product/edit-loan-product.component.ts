@@ -7,7 +7,15 @@
  */
 
 /** Angular Imports */
-import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+  inject
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 /** Custom Components */
@@ -67,7 +75,8 @@ import { LoanProductBaseComponent } from '../common/loan-product-base.component'
     LoanProductDeferredIncomeRecognitionStepComponent,
     LoanProductAccountingStepComponent,
     LoanProductPreviewStepComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditLoanProductComponent extends LoanProductBaseComponent implements OnInit, AfterViewInit {
   private route = inject(ActivatedRoute);
@@ -89,7 +98,7 @@ export class EditLoanProductComponent extends LoanProductBaseComponent implement
   loanProductSettingsStep: LoanProductSettingsStepComponent;
   @ViewChild(LoanProductChargesStepComponent, { static: false })
   loanProductChargesStep: LoanProductChargesStepComponent;
-  @ViewChild(LoanProductAccountingStepComponent, { static: false })
+  @ViewChild(LoanProductAccountingStepComponent, { static: true })
   loanProductAccountingStep: LoanProductAccountingStepComponent;
 
   loanProductAndTemplate: any;
@@ -129,7 +138,7 @@ export class EditLoanProductComponent extends LoanProductBaseComponent implement
   }
 
   ngOnInit() {
-    this.accountingRuleData = this.accounting.getAccountingRulesForLoans();
+    this.accountingRuleData = this.accounting.getAccountingRulesForLoans(this.loanProductService.isLoanProduct);
     this.buildAdvancedPaymentAllocation();
     if (this.loanProductService.isLoanProduct) {
       this.advancePaymentStrategy(this.loanProductAndTemplate.transactionProcessingStrategyCode);
@@ -166,8 +175,6 @@ export class EditLoanProductComponent extends LoanProductBaseComponent implement
           };
         }
       }
-    } else {
-      this.accountingRuleData = ['NONE'];
     }
   }
 
@@ -264,9 +271,7 @@ export class EditLoanProductComponent extends LoanProductBaseComponent implement
   }
 
   get loanProductAccountingForm() {
-    if (this.loanProductService.isLoanProduct) {
-      return this.loanProductAccountingStep?.loanProductAccountingForm;
-    }
+    return this.loanProductAccountingStep?.loanProductAccountingForm;
   }
 
   get loanProductFormValid(): boolean {
@@ -295,7 +300,8 @@ export class EditLoanProductComponent extends LoanProductBaseComponent implement
         this.loanProductDetailsForm.valid &&
         this.loanProductCurrencyForm.valid &&
         this.loanProductTermsForm.valid &&
-        this.loanProductSettingsForm.valid
+        this.loanProductSettingsForm.valid &&
+        this.loanProductAccountingForm?.valid
       );
     }
   }
@@ -330,6 +336,7 @@ export class EditLoanProductComponent extends LoanProductBaseComponent implement
         !this.loanProductCurrencyForm.pristine ||
         !this.loanProductTermsForm.pristine ||
         !this.loanProductSettingsForm.pristine ||
+        !(this.loanProductAccountingForm?.pristine ?? true) ||
         this.wasPaymentAllocationChanged
       );
     }
@@ -389,7 +396,8 @@ export class EditLoanProductComponent extends LoanProductBaseComponent implement
         ...this.loanProductDetailsStep.loanProductDetails,
         ...this.loanProductCurrencyStep.loanProductCurrency,
         ...this.loanProductTermsStep.loanProductTerms,
-        ...this.loanProductSettingsStep.loanProductSettings
+        ...this.loanProductSettingsStep.loanProductSettings,
+        ...this.loanProductAccountingStep.loanProductAccounting
       };
       loanProduct['paymentAllocation'] = this.paymentAllocation;
       return loanProduct;

@@ -7,7 +7,7 @@
  */
 
 /** Angular Imports */
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, inject } from '@angular/core';
 import { UntypedFormControl, UntypedFormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -26,7 +26,8 @@ import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.co
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     CdkTextareaAutosize
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UndoDisbursalComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
@@ -51,12 +52,25 @@ export class UndoDisbursalComponent extends LoanAccountActionsBaseComponent impl
    * Submits the undo disbursal form.
    */
   submit() {
-    let command = 'undodisbursal';
+    let loanCommand = 'undodisbursal';
     if (this.actionName === 'Undo Last Disbursal') {
-      command = 'undolastdisbursal';
+      loanCommand = 'undolastdisbursal';
     }
-    this.loanService.loanActionButtons(this.loanId, command, { note: this.note.value }).subscribe((response: any) => {
-      this.gotoLoanDefaultView();
+    const request$ = this.isLoanProduct
+      ? this.loanService.loanActionButtons(this.loanId, loanCommand, { note: this.note.value })
+      : this.isWorkingCapital
+        ? this.loanService.applyWorkingCapitalLoanAccountCommand(this.loanId, loanCommand, { note: this.note.value })
+        : undefined;
+
+    if (!request$) {
+      return;
+    }
+
+    request$.subscribe({
+      next: () => this.gotoLoanDefaultView(),
+      error: () => {
+        this.note.setErrors({ submitFailed: true });
+      }
     });
   }
 }

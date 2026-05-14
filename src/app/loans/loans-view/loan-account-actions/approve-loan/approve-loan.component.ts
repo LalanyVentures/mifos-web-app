@@ -7,8 +7,8 @@
  */
 
 /** Angular Imports. */
-import { Component, OnInit, inject } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormControl } from '@angular/forms';
 import { Dates } from 'app/core/utils/dates';
 
 /** Custom Services. */
@@ -31,7 +31,8 @@ import { LoanAccountActionsBaseComponent } from '../loan-account-actions-base.co
     InputAmountComponent,
     CdkTextareaAutosize,
     FormatNumberPipe
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implements OnInit {
   private formBuilder = inject(UntypedFormBuilder);
@@ -43,6 +44,7 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
   loanData: any = new Object();
   /** Minimum Date allowed. */
   minDate = new Date(2000, 0, 1);
+  maxDate = new Date();
   currency: Currency;
 
   /**
@@ -51,8 +53,8 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
    */
   constructor() {
     super();
+    this.maxDate = this.settingsService.maxFutureDate;
     this.route.data.subscribe((data: { actionButtonData: any }) => {
-      console.log(data.actionButtonData);
       this.loanData = data.actionButtonData;
       this.currency = data.actionButtonData.currency;
     });
@@ -63,13 +65,15 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
     this.setApproveLoanForm();
 
     // Get delinquency data for available disbursement amount with over applied
-    this.loanService.getLoanDelinquencyDataForTemplate(this.loanId).subscribe((delinquencyData: any) => {
-      // Check if the field is at root level
-      if (delinquencyData.availableDisbursementAmountWithOverApplied !== undefined) {
-        this.loanData.availableDisbursementAmountWithOverApplied =
-          delinquencyData.availableDisbursementAmountWithOverApplied;
-      }
-    });
+    if (this.isLoanProduct) {
+      this.loanService.getLoanDelinquencyDataForTemplate(this.loanId).subscribe((delinquencyData: any) => {
+        // Check if the field is at root level
+        if (delinquencyData.availableDisbursementAmountWithOverApplied !== undefined) {
+          this.loanData.availableDisbursementAmountWithOverApplied =
+            delinquencyData.availableDisbursementAmountWithOverApplied;
+        }
+      });
+    }
   }
 
   /**
@@ -91,6 +95,9 @@ export class ApproveLoanComponent extends LoanAccountActionsBaseComponent implem
       ],
       note: ['']
     });
+    if (this.isWorkingCapital) {
+      this.approveLoanForm.addControl('discountAmount', new UntypedFormControl());
+    }
   }
 
   /**

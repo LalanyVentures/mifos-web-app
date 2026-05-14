@@ -78,6 +78,12 @@ import { LoanBuyDownFeesDataResolver } from './common-resolvers/loan-buy-down-fe
 import { LoanOriginatorsTabComponent } from './loans-view/loan-originators-tab/loan-originators-tab.component';
 import { LoanOriginatorsResolver } from './common-resolvers/loan-originators.resolver';
 import { LoanProductsResolver } from './common-resolvers/loan-products.resolver';
+import { LoanDelinquencyRangeScheduleResolver } from './common-resolvers/working-capital/loan-delinquency-actions.resolver';
+import { LoanAmortizationScheduleTabComponent } from './loans-view/working-capital/loan-amortization-schedule-tab/loan-amortization-schedule-tab.component';
+import { LoanAmortizationScheduleResolver } from './common-resolvers/working-capital/loan-amortization-schedule.resolver';
+import { LoanBalancesTabComponent } from './loans-view/working-capital/loan-balances-tab/loan-balances-tab.component';
+import { LoanPeriodPaymentRatesComponent } from './loans-view/working-capital/loan-period-payment-rates/loan-period-payment-rates.component';
+import { LoanPeriodPaymentRatesResolver } from './loans-view/working-capital/common-resolvers/loan-period-payment-rates.resolver';
 
 /** Loans Route. */
 const routes: Routes = [
@@ -112,7 +118,7 @@ const routes: Routes = [
           {
             path: 'general',
             component: GeneralTabComponent,
-            data: { title: 'General', breadcrumb: 'General', routeParamBreadcrumb: false },
+            data: { title: 'Loan Account Details', breadcrumb: 'General', routeParamBreadcrumb: false },
             resolve: {}
           },
           {
@@ -136,6 +142,19 @@ const routes: Routes = [
             data: { title: 'Repayment Schedule', breadcrumb: 'Repayment Schedule', routeParamBreadcrumb: false }
           },
           {
+            path: 'balances',
+            component: LoanBalancesTabComponent,
+            data: { title: 'Balances', breadcrumb: 'Balances', routeParamBreadcrumb: false }
+          },
+          {
+            path: 'amortization-schedule',
+            component: LoanAmortizationScheduleTabComponent,
+            data: { title: 'Amortization Schedule', breadcrumb: 'Amortization Schedule', routeParamBreadcrumb: false },
+            resolve: {
+              amortizationSchedule: LoanAmortizationScheduleResolver
+            }
+          },
+          {
             path: 'transactions',
             data: { title: 'Loans Account Transactions', breadcrumb: 'Transactions', routeParamBreadcrumb: false },
             children: [
@@ -148,6 +167,14 @@ const routes: Routes = [
                 component: ExportTransactionsComponent
               }
             ]
+          },
+          {
+            path: 'payment-rates',
+            component: LoanPeriodPaymentRatesComponent,
+            data: { title: 'Period Payment Rates', breadcrumb: 'Period Payment Rates', routeParamBreadcrumb: false },
+            resolve: {
+              loanPaymentRatesData: LoanPeriodPaymentRatesResolver
+            }
           },
           {
             path: 'deferred-income',
@@ -168,7 +195,8 @@ const routes: Routes = [
             resolve: {
               loanDelinquencyTagsData: LoanDelinquencyTagsResolver,
               loanDelinquencyData: LoanDelinquencyDataResolver,
-              loanDelinquencyActions: LoanDelinquencyActionsResolver
+              loanDelinquencyActions: LoanDelinquencyActionsResolver,
+              wcLoanDelinquencyRangeSchedule: LoanDelinquencyRangeScheduleResolver
             },
             children: [
               {
@@ -179,7 +207,7 @@ const routes: Routes = [
           },
           {
             path: 'loan-reschedules',
-            data: {},
+            data: { title: 'Loan Reschedules', breadcrumb: 'Loan Reschedules', routeParamBreadcrumb: false },
             resolve: {
               loanRescheduleData: LoanReschedulesResolver
             },
@@ -279,7 +307,7 @@ const routes: Routes = [
           },
           {
             path: 'originators',
-            data: { title: 'Loans Originators', breadcrumb: 'Originators', routeParamBreadcrumb: false },
+            data: { title: 'Loan Originators', breadcrumb: 'Originators', routeParamBreadcrumb: false },
             resolve: {
               loanOriginatorsData: LoanOriginatorsResolver
             },
@@ -447,7 +475,9 @@ const routes: Routes = [
     LoanTermVariationsResolver,
     LoanDeferredIncomeDataResolver,
     LoanBuyDownFeesDataResolver,
-    LoanProductsResolver
+    LoanProductsResolver,
+    LoanAmortizationScheduleResolver,
+    LoanPeriodPaymentRatesResolver
   ]
 })
 export class LoansRoutingModule {}

@@ -1,31 +1,30 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 import { CloseClientComponent } from './close-client.component';
 import { ClientsService } from 'app/clients/clients.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { Dates } from 'app/core/utils/dates';
-import { TranslateModule } from '@ngx-translate/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { ClientActionNotifierService } from '../client-action-notifier.service';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
 
 describe('CloseClientComponent', () => {
   let component: CloseClientComponent;
   let fixture: ComponentFixture<CloseClientComponent>;
 
-  let router: jest.Mocked<Router>;
   let clientsService: jest.Mocked<ClientsService>;
   let settingsService: SettingsService;
   let dates: jest.Mocked<Dates>;
+  let notifier: jest.Mocked<ClientActionNotifierService>;
 
   const clientId = '456';
   const businessDate = new Date(2025, 11, 20);
 
   const setup = async () => {
-    router = { navigate: jest.fn() } as any;
-
     clientsService = {
       executeClientCommand: jest.fn(() => of({}))
     } as any;
@@ -40,13 +39,14 @@ describe('CloseClientComponent', () => {
       formatDate: jest.fn(() => '20 March 2026')
     } as any;
 
+    notifier = { notifyAndNavigate: jest.fn() } as any;
+
     await TestBed.configureTestingModule({
       imports: [
         CloseClientComponent,
         TranslateModule.forRoot()
       ],
       providers: [
-        { provide: Router, useValue: router },
         {
           provide: ActivatedRoute,
           useValue: {
@@ -57,6 +57,7 @@ describe('CloseClientComponent', () => {
         { provide: ClientsService, useValue: clientsService },
         { provide: SettingsService, useValue: settingsService },
         { provide: Dates, useValue: dates },
+        { provide: ClientActionNotifierService, useValue: notifier },
         provideNativeDateAdapter(),
         provideAnimationsAsync()
       ]
@@ -119,21 +120,24 @@ describe('CloseClientComponent', () => {
     expect(dates.formatDate).not.toHaveBeenCalled();
   });
 
-  it('should navigate after successful submission', () => {
+  it('should notify and navigate after successful submission', () => {
     fillValidForm();
 
     component.submit();
 
-    expect(router.navigate).toHaveBeenCalled();
+    expect(notifier.notifyAndNavigate).toHaveBeenCalledWith(
+      'clients.actions.close.success',
+      TestBed.inject(ActivatedRoute)
+    );
   });
 
-  it('should not navigate if API call fails', () => {
+  it('should not notify and navigate if API call fails', () => {
     clientsService.executeClientCommand.mockReturnValueOnce(throwError(() => new Error('API error')));
 
     fillValidForm();
 
     component.submit();
 
-    expect(router.navigate).not.toHaveBeenCalled();
+    expect(notifier.notifyAndNavigate).not.toHaveBeenCalled();
   });
 });

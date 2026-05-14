@@ -6,13 +6,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { Currency } from '../models/general.model';
 import { UntypedFormControl } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
 import { MatHint } from '@angular/material/form-field';
 import { FormatAmountDirective } from '../../directives/format-amount.directive';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { amountValueValidator } from '../validators/amount-value.validator';
 
 @Component({
   selector: 'mifosx-input-amount',
@@ -23,9 +24,10 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FormatAmountDirective,
     MatHint,
     CurrencyPipe
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InputAmountComponent {
+export class InputAmountComponent implements OnInit {
   @Input() isRequired = false;
   @Input() currency: Currency;
   @Input() inputLabel: string;
@@ -37,10 +39,16 @@ export class InputAmountComponent {
 
   constructor() {}
 
+  ngOnInit(): void {
+    this.inputFormControl.addValidators(amountValueValidator());
+    this.inputFormControl.updateValueAndValidity({ emitEvent: false });
+  }
+
   numberOnly(event: any): boolean {
     const charCode = event.which ? event.which : event.keyCode;
     if (charCode === 46) {
-      if (!(this.inputFormControl.value.indexOf('.') > -1)) {
+      const value = String(this.inputFormControl.value || '');
+      if (!(value.indexOf('.') > -1)) {
         return true;
       }
       return false;

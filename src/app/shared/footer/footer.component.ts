@@ -7,7 +7,7 @@
  */
 
 /** Angular Imports */
-import { Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, inject } from '@angular/core';
 import { Alert } from 'app/core/alert/alert.model';
 import { AlertService } from 'app/core/alert/alert.service';
 import { AuthenticationService } from 'app/core/authentication/authentication.service';
@@ -19,6 +19,7 @@ import { VersionService } from 'app/system/version.service';
 /** Environment Configuration */
 import { environment } from '../../../environments/environment';
 import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 import { NgClass, DatePipe } from '@angular/common';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 
@@ -33,7 +34,8 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     ...STANDALONE_SHARED_IMPORTS,
     NgClass,
     DatePipe
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FooterComponent implements OnInit, OnDestroy {
   private systemService = inject(SystemService);
@@ -42,6 +44,7 @@ export class FooterComponent implements OnInit, OnDestroy {
   private alertService = inject(AlertService);
   private dateUtils = inject(Dates);
   private versionService = inject(VersionService);
+  private translateService = inject(TranslateService);
 
   username: string = '';
   name: string = '';
@@ -85,7 +88,7 @@ export class FooterComponent implements OnInit, OnDestroy {
       this.alert$ = this.alertService.alertEvent.subscribe((alertEvent: Alert) => {
         const alertType = alertEvent.type;
         if (alertType === SettingsService.businessDateType + ' Set Config') {
-          this.isBusinessDateEnabled = alertEvent.message === 'enabled' ? true : false;
+          this.isBusinessDateEnabled = alertEvent.enabled ? true : false;
           this.isBusinessDateDefined = false;
           if (this.isBusinessDateEnabled) {
             this.setBusinessDate();
@@ -94,7 +97,7 @@ export class FooterComponent implements OnInit, OnDestroy {
           if (this.isBusinessDateEnabled) {
             this.setBusinessDate();
           }
-        } else if (alertType === 'Authentication Start') {
+        } else if (alertType === this.translateService.instant('errors.auth.startType')) {
           this.timer = setTimeout(() => {
             this.getConfigurations();
           }, 60000);

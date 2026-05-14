@@ -7,7 +7,7 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   AbstractControl,
@@ -23,6 +23,7 @@ import { AccountTransfersService } from '../account-transfers.service';
 import { SettingsService } from 'app/settings/settings.service';
 import { ClientsService } from 'app/clients/clients.service';
 import { Dates } from 'app/core/utils/dates';
+import { TranslateService } from '@ngx-translate/core';
 
 /** Environment Configuration */
 import { environment } from '../../../environments/environment';
@@ -65,7 +66,8 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
     FaIconComponent,
     CdkTextareaAutosize,
     MatProgressSpinner
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MakeAccountTransfersComponent implements OnInit, AfterViewInit {
   private formBuilder = inject(UntypedFormBuilder);
@@ -75,6 +77,7 @@ export class MakeAccountTransfersComponent implements OnInit, AfterViewInit {
   private dateUtils = inject(Dates);
   private settingsService = inject(SettingsService);
   private clientsService = inject(ClientsService);
+  private translateService = inject(TranslateService);
 
   /** Stepper reference */
   @ViewChild('transferStepper') transferStepper: MatStepper;
@@ -396,7 +399,9 @@ export class MakeAccountTransfersComponent implements OnInit, AfterViewInit {
         this.transferComplete = true;
         this.transferSuccess = false;
         this.transferErrorMessage =
-          error?.error?.defaultUserMessage || error?.message || 'An unexpected error occurred.';
+          error?.error?.defaultUserMessage ||
+          error?.message ||
+          this.translateService.instant('errors.generic.unexpectedShort');
         this.transferStepper.next();
         this.isLoading = false;
       }
@@ -445,7 +450,9 @@ export class MakeAccountTransfersComponent implements OnInit, AfterViewInit {
         this.transferComplete = true;
         this.transferSuccess = false;
         this.transferErrorMessage =
-          error?.error?.defaultUserMessage || 'An unexpected error occurred. Please try again.';
+          error?.error?.defaultUserMessage ||
+          error?.message ||
+          this.translateService.instant('errors.generic.unexpectedRetry');
         this.transferStepper.next();
         this.isLoading = false;
       }

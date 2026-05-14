@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright since 2025 Mifos Initiative
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -18,6 +18,7 @@ import { defineConfig, devices } from '@playwright/test';
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
+  globalSetup: process.env.CI ? './playwright/global-setup.ts' : undefined,
   // Test directory
   testDir: './playwright/tests',
 
@@ -43,8 +44,8 @@ export default defineConfig({
 
   // Global test settings
   use: {
-    // Base URL for the Angular app
-    baseURL: 'http://localhost:4200',
+    // Base URL for the Angular app (aligned with global-setup.ts and configurable via env for CI)
+    baseURL: process.env.E2E_BASE_URL || 'http://localhost:4200',
 
     // Handle self-signed certificates from Fineract backend
     ignoreHTTPSErrors: true,
@@ -73,34 +74,34 @@ export default defineConfig({
   // Global test timeout (per test)
   timeout: process.env.CI ? 180000 : 120000,
 
-  // Configure projects for different browsers
+  // Configure projects for authentication setup and browser testing
   projects: [
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+      testDir: './playwright',
+      retries: process.env.CI ? 2 : 0
+    },
     {
       name: 'chromium',
       use: {
         ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
         // Launch options for handling SSL in headed mode
         launchOptions: {
           args: ['--ignore-certificate-errors']
         }
-      }
+      },
+      dependencies: ['setup']
     }
   ],
 
-  // Web server configuration
-  // In CI: builds production bundle (without base-href), then serves it with http-server
-  // Locally: reuses existing ng serve if running
-  webServer: {
-    command: process.env.CI
-      ? 'npm run build && npx http-server ./dist/web-app/browser -p 4200 --silent'
-      : 'npm run start',
-    url: 'http://localhost:4200',
-    reuseExistingServer: !process.env.CI,
-    timeout: 180000,
-    // Add retry logic for server startup
-    ...(process.env.CI && {
-      stdout: 'pipe',
-      stderr: 'pipe'
-    })
-  }
+  webServer: process.env.CI
+    ? undefined
+    : {
+        command: 'npm run start',
+        url: 'http://localhost:4200',
+        reuseExistingServer: true,
+        timeout: 180000
+      }
 });

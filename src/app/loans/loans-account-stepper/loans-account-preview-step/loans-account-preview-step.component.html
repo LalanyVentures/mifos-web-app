@@ -51,9 +51,7 @@
   @if (loansAccount.fundId) {
     <div class="flex-fill">
       <span class="flex-30">{{ 'labels.inputs.Fund' | translate }}:</span>
-      <span class="flex-70">{{
-        loansAccount.fundId | find: loansAccountProductTemplate.fundOptions : 'id' : 'name'
-      }}</span>
+      <span class="flex-70">{{ fundName(loansAccount.fundId) }}</span>
     </div>
   }
 
@@ -106,6 +104,38 @@
           {{ loansAccount.discount | currency: loansAccountProductTemplate.currency.code : 'symbol-narrow' : '1.2-2' }}
           <span class="m-l-5">{{ loansAccountProductTemplate.currency.code }}</span>
         </span>
+      </div>
+    }
+
+    @if (loansAccount.delinquencyGraceDays) {
+      <div class="flex-fill">
+        <span class="flex-30">{{ 'labels.inputs.Delinquency Grace Days' | translate }}:</span>
+        <span class="flex-70"> {{ loansAccount.delinquencyGraceDays | formatNumber }}</span>
+      </div>
+    }
+
+    @if (loansAccount.delinquencyStartType) {
+      <div class="flex-fill">
+        <span class="flex-30">{{ 'labels.inputs.Delinquency Start Type' | translate }}:</span>
+        <span class="flex-60">{{ camalize(loansAccount.delinquencyStartType) | translateKey: 'catalogs' }}</span>
+      </div>
+    }
+
+    @if (loansAccount.breachId) {
+      <div class="flex-fill">
+        <span class="flex-30">{{ 'labels.inputs.Breach' | translate }}:</span>
+        <span class="flex-60"
+          ><mifosx-breach-display [singleRow]="false" [breach]="getBreach(loansAccount.breachId)"
+        /></span>
+      </div>
+    }
+
+    @if (loansAccount.nearBreachId) {
+      <div class="flex-fill">
+        <span class="flex-30">{{ 'labels.inputs.Near Breach' | translate }}:</span>
+        <span class="flex-60"
+          ><mifosx-breach-display [singleRow]="false" [nearBreach]="getNearBreach(loansAccount.nearBreachId)"
+        /></span>
       </div>
     }
 
@@ -457,7 +487,11 @@
     <fa-icon icon="arrow-left" class="m-r-10"></fa-icon>
     {{ 'labels.buttons.Previous' | translate }}
   </button>
-  <button mat-raised-button [routerLink]="['../..']">
+  <button
+    mat-raised-button
+    [routerLink]="['../..']"
+    [queryParams]="{ productType: loanProductService.productType.value }"
+  >
     {{ 'labels.buttons.Cancel' | translate }}
   </button>
   <button mat-raised-button color="primary" (click)="submitEvent.emit()">

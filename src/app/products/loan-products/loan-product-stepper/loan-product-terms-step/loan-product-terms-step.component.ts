@@ -6,7 +6,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, OnInit, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, UntypedFormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -65,7 +65,8 @@ import { LoanProductBaseComponent } from '../../common/loan-product-base.compone
     MatStepperPrevious,
     MatStepperNext,
     FindPipe
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoanProductTermsStepComponent extends LoanProductBaseComponent implements OnInit, OnChanges {
   private formBuilder = inject(UntypedFormBuilder);
@@ -75,7 +76,7 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
 
   @Input() loanProductsTemplate: any;
 
-  loanProductTermsForm: UntypedFormGroup;
+  loanProductTermsForm!: UntypedFormGroup;
 
   /** Zero Interest control. */
   zeroInterest = new UntypedFormControl(false);
@@ -203,7 +204,8 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         repaymentEvery: this.loanProductsTemplate.repaymentEvery,
         repaymentFrequencyType: this.loanProductsTemplate.repaymentFrequencyType
           ? this.loanProductsTemplate.repaymentFrequencyType.id
-          : null
+          : null,
+        discount: this.loanProductsTemplate.discount
       });
     }
   }
@@ -323,20 +325,20 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         minPeriodPaymentRate: [
           '',
           [
-            Validators.min(0.01)
+            Validators.min(0)
           ]
         ],
         periodPaymentRate: [
           '',
           [
             Validators.required,
-            Validators.min(0.01)
+            Validators.min(0)
           ]
         ],
         maxPeriodPaymentRate: [
           '',
           [
-            Validators.min(0.01)
+            Validators.min(0)
           ]
         ],
         repaymentEvery: [
@@ -349,6 +351,12 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         repaymentFrequencyType: [
           '',
           Validators.required
+        ],
+        discount: [
+          '',
+          [
+            Validators.min(0)
+          ]
         ]
       });
     }
@@ -363,19 +371,19 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
   setConditionalControls() {
     if (this.loanProductService.isLoanProduct) {
       this.loanProductTermsForm
-        .get('allowApprovedDisbursedAmountsOverApplied')
+        .get('allowApprovedDisbursedAmountsOverApplied')!
         .valueChanges.subscribe((allowApprovedDisbursedAmountsOverApplied) => {
           if (allowApprovedDisbursedAmountsOverApplied) {
-            this.loanProductTermsForm.get('overAppliedCalculationType').enable();
-            this.loanProductTermsForm.get('overAppliedNumber').enable();
+            this.loanProductTermsForm.get('overAppliedCalculationType')!.enable();
+            this.loanProductTermsForm.get('overAppliedNumber')!.enable();
             if (this.loanProductService.isLoanProduct) {
               this.loanProductTermsForm.addControl('disallowExpectedDisbursements', new UntypedFormControl(true));
             }
           } else {
-            this.loanProductTermsForm.get('overAppliedCalculationType').disable();
-            this.loanProductTermsForm.get('overAppliedCalculationType').patchValue(null);
-            this.loanProductTermsForm.get('overAppliedNumber').disable();
-            this.loanProductTermsForm.get('overAppliedNumber').patchValue(null);
+            this.loanProductTermsForm.get('overAppliedCalculationType')!.disable();
+            this.loanProductTermsForm.get('overAppliedCalculationType')!.patchValue(null);
+            this.loanProductTermsForm.get('overAppliedNumber')!.disable();
+            this.loanProductTermsForm.get('overAppliedNumber')!.patchValue(null);
             if (this.loanProductService.isLoanProduct) {
               this.loanProductTermsForm.removeControl('disallowExpectedDisbursements');
             }
@@ -383,7 +391,7 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
         });
 
       this.loanProductTermsForm
-        .get('isLinkedToFloatingInterestRates')
+        .get('isLinkedToFloatingInterestRates')!
         .valueChanges.subscribe((isLinkedToFloatingInterestRates) => {
           if (isLinkedToFloatingInterestRates) {
             this.loanProductTermsForm.removeControl('minInterestRatePerPeriod');
@@ -450,7 +458,7 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
           }
         });
 
-      this.loanProductTermsForm.get('useBorrowerCycle').valueChanges.subscribe((useBorrowerCycle) => {
+      this.loanProductTermsForm.get('useBorrowerCycle')!.valueChanges.subscribe((useBorrowerCycle) => {
         if (useBorrowerCycle) {
           this.loanProductTermsForm.addControl('principalVariationsForBorrowerCycle', this.formBuilder.array([]));
           this.loanProductTermsForm.addControl(
@@ -467,25 +475,25 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
 
       this.zeroInterest.valueChanges.subscribe((zeroInterest) => {
         if (zeroInterest) {
-          this.loanProductTermsForm.get('minInterestRatePerPeriod').patchValue(0);
-          this.loanProductTermsForm.get('minInterestRatePerPeriod').disable();
-          this.loanProductTermsForm.get('interestRatePerPeriod').patchValue(0);
-          this.loanProductTermsForm.get('interestRatePerPeriod').disable();
-          this.loanProductTermsForm.get('maxInterestRatePerPeriod').patchValue(0);
-          this.loanProductTermsForm.get('maxInterestRatePerPeriod').disable();
+          this.loanProductTermsForm.get('minInterestRatePerPeriod')!.patchValue(0);
+          this.loanProductTermsForm.get('minInterestRatePerPeriod')!.disable();
+          this.loanProductTermsForm.get('interestRatePerPeriod')!.patchValue(0);
+          this.loanProductTermsForm.get('interestRatePerPeriod')!.disable();
+          this.loanProductTermsForm.get('maxInterestRatePerPeriod')!.patchValue(0);
+          this.loanProductTermsForm.get('maxInterestRatePerPeriod')!.disable();
         } else {
           this.loanProductTermsForm
-            .get('minInterestRatePerPeriod')
+            .get('minInterestRatePerPeriod')!
             .patchValue(this.loanProductsTemplate.minInterestRatePerPeriod);
-          this.loanProductTermsForm.get('minInterestRatePerPeriod').enable();
+          this.loanProductTermsForm.get('minInterestRatePerPeriod')!.enable();
           this.loanProductTermsForm
-            .get('interestRatePerPeriod')
+            .get('interestRatePerPeriod')!
             .patchValue(this.loanProductsTemplate.interestRatePerPeriod);
-          this.loanProductTermsForm.get('interestRatePerPeriod').enable();
+          this.loanProductTermsForm.get('interestRatePerPeriod')!.enable();
           this.loanProductTermsForm
-            .get('maxInterestRatePerPeriod')
+            .get('maxInterestRatePerPeriod')!
             .patchValue(this.loanProductsTemplate.maxInterestRatePerPeriod);
-          this.loanProductTermsForm.get('maxInterestRatePerPeriod').enable();
+          this.loanProductTermsForm.get('maxInterestRatePerPeriod')!.enable();
         }
         this.validateAdvancedPaymentStrategyControls();
       });
@@ -493,15 +501,15 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
   }
 
   get principalVariationsForBorrowerCycle(): UntypedFormArray {
-    return this.loanProductTermsForm.get('principalVariationsForBorrowerCycle') as UntypedFormArray;
+    return this.loanProductTermsForm.get('principalVariationsForBorrowerCycle')! as UntypedFormArray;
   }
 
   get numberOfRepaymentVariationsForBorrowerCycle(): UntypedFormArray {
-    return this.loanProductTermsForm.get('numberOfRepaymentVariationsForBorrowerCycle') as UntypedFormArray;
+    return this.loanProductTermsForm.get('numberOfRepaymentVariationsForBorrowerCycle')! as UntypedFormArray;
   }
 
   get interestRateVariationsForBorrowerCycle(): UntypedFormArray {
-    return this.loanProductTermsForm.get('interestRateVariationsForBorrowerCycle') as UntypedFormArray;
+    return this.loanProductTermsForm.get('interestRateVariationsForBorrowerCycle')! as UntypedFormArray;
   }
 
   setLoanProductTermsFormDirty() {
@@ -647,9 +655,9 @@ export class LoanProductTermsStepComponent extends LoanProductBaseComponent impl
 
   private validateAdvancedPaymentStrategyControls(): void {
     if (this.allowFixedLength()) {
-      this.loanProductTermsForm.get('fixedLength').patchValue(this.loanProductsTemplate.fixedLength || null);
+      this.loanProductTermsForm.get('fixedLength')!.patchValue(this.loanProductsTemplate.fixedLength || null);
     } else {
-      this.loanProductTermsForm.get('fixedLength').patchValue(null);
+      this.loanProductTermsForm.get('fixedLength')!.patchValue(null);
     }
   }
 }

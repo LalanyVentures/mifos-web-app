@@ -7,14 +7,15 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, inject } from '@angular/core';
-import { UntypedFormGroup, UntypedFormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 /** Custom Services */
 import { ClientsService } from 'app/clients/clients.service';
 import { Dates } from 'app/core/utils/dates';
 import { SettingsService } from 'app/settings/settings.service';
+import { ClientActionNotifierService } from '../client-action-notifier.service';
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
 
@@ -28,15 +29,16 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     CdkTextareaAutosize
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UndoClientTransferComponent implements OnInit {
-  private formBuilder = inject(UntypedFormBuilder);
-  private clientsService = inject(ClientsService);
-  private settingsService = inject(SettingsService);
-  private dateUtils = inject(Dates);
-  private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  private readonly formBuilder = inject(UntypedFormBuilder);
+  private readonly clientsService = inject(ClientsService);
+  private readonly settingsService = inject(SettingsService);
+  private readonly dateUtils = inject(Dates);
+  private readonly route = inject(ActivatedRoute);
+  private readonly notifier = inject(ClientActionNotifierService);
 
   /** Undo Client Transfer form. */
   undoClientTransferForm: UntypedFormGroup;
@@ -91,7 +93,7 @@ export class UndoClientTransferComponent implements OnInit {
       ...undoClientTransferFormData
     };
     this.clientsService.executeClientCommand(this.clientId, 'withdrawTransfer', data).subscribe(() => {
-      this.router.navigate(['../../'], { relativeTo: this.route });
+      this.notifier.notifyAndNavigate('clients.actions.undoTransfer.success', this.route);
     });
   }
 }

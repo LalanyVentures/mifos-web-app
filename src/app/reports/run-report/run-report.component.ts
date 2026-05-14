@@ -7,16 +7,9 @@
  */
 
 /** Angular Imports */
-import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import {
-  AbstractControl,
-  UntypedFormControl,
-  UntypedFormGroup,
-  ValidatorFn,
-  Validators,
-  ReactiveFormsModule
-} from '@angular/forms';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { AbstractControl, UntypedFormControl, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 
 /** Custom Services */
 import { ReportsService } from '../reports.service';
@@ -30,7 +23,8 @@ import { GlobalConfiguration } from 'app/system/configurations/global-configurat
 
 import * as ExcelJS from 'exceljs';
 import { AlertService } from 'app/core/alert/alert.service';
-import { NgIf, NgFor, NgSwitch, NgSwitchCase } from '@angular/common';
+import { TranslateService } from '@ngx-translate/core';
+import { NgSwitch, NgSwitchCase } from '@angular/common';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { TableAndSmsComponent } from './table-and-sms/table-and-sms.component';
@@ -63,6 +57,7 @@ export class RunReportComponent implements OnInit {
   private reportsService = inject(ReportsService);
   private settingsService = inject(SettingsService);
   private alertService = inject(AlertService);
+  private translateService = inject(TranslateService);
   private dateUtils = inject(Dates);
 
   /** Minimum date allowed. */
@@ -467,7 +462,10 @@ export class RunReportComponent implements OnInit {
     this.reportsService.getRunReportData(reportName, payload).subscribe({
       next: async (res: any) => {
         if (res.data.length > 0) {
-          this.alertService.alert({ type: 'Report generation', message: `Report: ${reportName} data generated` });
+          this.alertService.alert({
+            type: this.translateService.instant('errors.report.type'),
+            message: this.translateService.instant('errors.report.generated', { reportName })
+          });
 
           const displayedColumns: string[] = [];
           res.columnHeaders.forEach((header: any) => {
@@ -478,14 +476,17 @@ export class RunReportComponent implements OnInit {
           await this.exportToXLS(reportName, res.data, displayedColumns, activeFilters);
         } else {
           this.alertService.alert({
-            type: 'Report generation',
-            message: `Report: ${reportName} without data generated`
+            type: this.translateService.instant('errors.report.type'),
+            message: this.translateService.instant('errors.report.generatedNoData', { reportName })
           });
         }
         this.isProcessing = false;
       },
       error: () => {
-        this.alertService.alert({ type: 'Report generation', message: `Failed to generate report: ${reportName}` });
+        this.alertService.alert({
+          type: this.translateService.instant('errors.report.type'),
+          message: `Failed to generate report: ${reportName}`
+        });
         this.isProcessing = false;
       }
     });
@@ -543,7 +544,8 @@ export class RunReportComponent implements OnInit {
     displayedColumns: string[],
     activeFilters: Array<{ label: string; value: string }>
   ): Promise<void> {
-    const fileName = `${reportName}.xlsx`;
+    const generatedAt = new Date();
+    const fileName = `${reportName}-${this.formatTimestampForFileName(generatedAt)}.xlsx`;
 
     // Format data for ExcelJS
     const data = reportRows.map((object: any) => {
@@ -566,7 +568,7 @@ export class RunReportComponent implements OnInit {
 
     const metadataRowValues: string[] = [
       'Generated At',
-      new Date().toLocaleString()
+      generatedAt.toLocaleString()
     ];
     activeFilters.forEach((filter) => {
       metadataRowValues.push(filter.label, filter.value);
@@ -620,5 +622,16 @@ export class RunReportComponent implements OnInit {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }, 0);
+  }
+
+  private formatTimestampForFileName(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${year}${month}${day}-${hours}${minutes}${seconds}`;
   }
 }

@@ -8,7 +8,7 @@
 
 /* eslint-disable @angular-eslint/prefer-inject */
 /** Angular Imports */
-import { Component, OnInit, HostListener, HostBinding, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, HostListener, HostBinding, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
@@ -94,7 +94,8 @@ registerLocaleData(localeSW);
   ],
 
   // eslint-disable-next-line @angular-eslint/prefer-standalone
-  standalone: false
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WebAppComponent implements OnInit, OnDestroy {
   buttonConfig: KeyboardShortcutsConfiguration;
@@ -212,11 +213,15 @@ export class WebAppComponent implements OnInit, OnDestroy {
 
     // Setup alerts with hover behavior
     this.alertService.alertEvent.subscribe((alertEvent: Alert) => {
-      const snackBarRef = this.snackBar.open(`${alertEvent.message}`, 'Close', {
-        duration: 0, // Set to 0 - no auto-dismiss initially
-        horizontalPosition: 'right',
-        verticalPosition: 'top'
-      });
+      const snackBarRef = this.snackBar.open(
+        `${alertEvent.message}`,
+        this.translateService.instant('labels.buttons.Close'),
+        {
+          duration: 0, // Set to 0 - no auto-dismiss initially
+          horizontalPosition: 'right',
+          verticalPosition: 'top'
+        }
+      );
       // Handle hover behavior
       this.handleSnackbarHover(snackBarRef, 2000);
     });

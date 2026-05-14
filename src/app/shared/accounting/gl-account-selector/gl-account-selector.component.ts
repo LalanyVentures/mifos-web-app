@@ -6,7 +6,16 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  inject
+} from '@angular/core';
 import { UntypedFormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { GLAccount } from 'app/shared/models/general.model';
@@ -15,6 +24,8 @@ import { takeUntil } from 'rxjs/operators';
 import { AsyncPipe } from '@angular/common';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { MatIconButton } from '@angular/material/button';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'mifosx-gl-account-selector',
@@ -23,8 +34,11 @@ import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
   imports: [
     ...STANDALONE_SHARED_IMPORTS,
     NgxMatSelectSearchModule,
+    MatIconButton,
+    FaIconComponent,
     AsyncPipe
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GlAccountSelectorComponent implements OnInit, OnChanges, OnDestroy {
   private translateService = inject(TranslateService);
@@ -81,5 +95,13 @@ export class GlAccountSelectorComponent implements OnInit, OnChanges, OnDestroy 
         );
       }
     }
+  }
+
+  resetValue($event: Event): void {
+    $event.stopPropagation();
+    this.inputFormControl.setValue(null);
+    this.inputFormControl.markAsDirty();
+    this.inputFormControl.markAsTouched();
+    this.inputFormControl.updateValueAndValidity();
   }
 }
