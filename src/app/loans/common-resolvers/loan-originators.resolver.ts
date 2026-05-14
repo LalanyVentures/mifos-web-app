@@ -10,7 +10,7 @@ import { Injectable, inject } from '@angular/core';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { LoansService } from 'app/loans/loans.service';
 import { LoanProductService } from 'app/products/loan-products/services/loan-product.service';
-import { Observable, throwError } from 'rxjs';
+import { catchError, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -29,7 +29,15 @@ export class LoanOriginatorsResolver {
       return throwError(() => new Error('Missing loanId route param'));
     }
     if (this.loanProductService.isLoanProduct) {
-      return this.loansService.getLoanOriginators(loanId);
+      return this.loansService.getLoanOriginators(loanId).pipe(
+        catchError((error) => {
+          if (error?.status === 404) {
+            return of({ originators: [] });
+          }
+          return throwError(() => error);
+        })
+      );
     }
+    return of({ originators: [] });
   }
 }
