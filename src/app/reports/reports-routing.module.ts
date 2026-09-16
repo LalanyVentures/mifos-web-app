@@ -16,6 +16,7 @@ import { Route } from '../core/route/route.service';
 /** Custom Components */
 import { ReportsComponent } from './reports.component';
 import { RunReportComponent } from './run-report/run-report.component';
+import { reportRunPermissionGuard } from './report-run-permission.guard';
 
 /** Custom Resolvers */
 import { ReportsResolver } from './common-resolvers/reports.resolver';
@@ -46,6 +47,7 @@ const routes: Routes = [
           path: 'run/:name',
           data: { title: 'Reports', routeParamBreadcrumb: 'name' },
           component: RunReportComponent,
+          canActivate: [reportRunPermissionGuard],
           resolve: {
             reportParameters: RunReportResolver,
             configurations: GlobalConfigurationsResolver
