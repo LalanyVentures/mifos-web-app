@@ -87,4 +87,18 @@ export class UsersService {
     const httpParams = new HttpParams().set('officeId', officeId.toString()).set('status', 'all');
     return this.http.get('/staff', { params: httpParams });
   }
+
+  /**
+   * Search clients for self-service user mappings.
+   * @param searchText Client name search text.
+   * @returns Matching clients.
+   */
+  searchClients(searchText: string): Observable<any> {
+    const httpParams = new HttpParams()
+      .set('displayName', searchText)
+      .set('orphansOnly', 'false')
+      .set('sortOrder', 'ASC')
+      .set('orderBy', 'displayName');
+    return this.http.get('/clients', { params: httpParams });
+  }
 }

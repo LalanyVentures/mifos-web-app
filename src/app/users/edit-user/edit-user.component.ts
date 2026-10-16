@@ -7,7 +7,7 @@
  */
 
 /** Angular Imports */
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UntypedFormGroup, UntypedFormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 
@@ -15,6 +15,8 @@ import { UntypedFormGroup, UntypedFormBuilder, Validators, ReactiveFormsModule }
 import { UsersService } from '../users.service';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { UntypedFormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 
 /**
  * Edit User Component.
@@ -34,6 +36,7 @@ export class EditUserComponent implements OnInit {
   private usersService = inject(UsersService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private changeDetector = inject(ChangeDetectorRef);
 
   /** User Data */
   userData: any;
@@ -43,6 +46,10 @@ export class EditUserComponent implements OnInit {
   staffData: any;
   /** Roles Data */
   rolesData: any;
+  /** Client options available for linking to this user. */
+  clientsData: any[] = [];
+  /** Client search control. */
+  clientsSearch = new UntypedFormControl('');
   /** Edit User form. */
   editUserForm: UntypedFormGroup;
 
@@ -64,6 +71,18 @@ export class EditUserComponent implements OnInit {
   ngOnInit() {
     this.createEditUserForm();
     this.officeChanged(this.userData.officeId);
+    this.clientsData = [...(this.userData.clients || [])];
+    this.clientsSearch.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        filter((value: string) => (value || '').trim().length >= 2)
+      )
+      .subscribe((value: string) => this.searchClients(value.trim()));
+    this.editUserForm.controls.isSelfServiceUser.valueChanges.subscribe((enabled: boolean) => {
+      this.updateSelfServiceControls(enabled);
+    });
+    this.updateSelfServiceControls(!!this.userData.isSelfServiceUser);
   }
 
   /**
@@ -71,6 +90,7 @@ export class EditUserComponent implements OnInit {
    */
   createEditUserForm() {
     const staffId = this.userData.staff ? this.userData.staff.id : null;
+    const linkedClients = (this.userData.clients || []).map((client: any) => client.id);
     this.editUserForm = this.formBuilder.group({
       username: [
         this.userData.username,
@@ -103,10 +123,40 @@ export class EditUserComponent implements OnInit {
         Validators.required
       ],
       staffId: [staffId],
+      isSelfServiceUser: [!!this.userData.isSelfServiceUser],
+      clients: [linkedClients],
       roles: [
         this.userData.selectedRoles.map((role: any) => role.id),
         Validators.required
       ]
+    });
+  }
+
+  private updateSelfServiceControls(enabled: boolean) {
+    const staffControl = this.editUserForm.controls.staffId;
+    const clientsControl = this.editUserForm.controls.clients;
+    if (enabled) {
+      staffControl.setValue(null);
+      staffControl.disable({ emitEvent: false });
+      clientsControl.setValidators(Validators.required);
+    } else {
+      staffControl.enable({ emitEvent: false });
+      clientsControl.clearValidators();
+      clientsControl.setValue([]);
+    }
+    clientsControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private searchClients(searchText: string) {
+    this.usersService.searchClients(searchText).subscribe((response: any) => {
+      const matches = response.pageItems || response || [];
+      const selectedIds = this.editUserForm.controls.clients.value || [];
+      const selected = this.clientsData.filter((client) => selectedIds.includes(client.id));
+      this.clientsData = [
+        ...selected,
+        ...matches.filter((client: any) => !selectedIds.includes(client.id))
+      ];
+      this.changeDetector.markForCheck();
     });
   }
 
@@ -126,7 +176,8 @@ export class EditUserComponent implements OnInit {
    * if successful redirects to the updated user.
    */
   submit() {
-    const editedUser = this.editUserForm.value;
+    const editedUser = this.editUserForm.getRawValue();
+    if (!editedUser.isSelfServiceUser) editedUser.clients = [];
     this.usersService.editUser(this.userData.id, editedUser).subscribe((response: any) => {
       this.router.navigate(
         [

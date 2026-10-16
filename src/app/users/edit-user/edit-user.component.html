@@ -79,6 +79,12 @@
             </mat-checkbox>
           </div>
 
+          <div class="password-never-expires-wrapper flex-48">
+            <mat-checkbox labelPosition="before" formControlName="isSelfServiceUser">
+              {{ 'labels.buttons.Is Self Service' | translate }}
+            </mat-checkbox>
+          </div>
+
           <mat-form-field class="flex-48">
             <mat-label>{{ 'labels.inputs.Office' | translate }}</mat-label>
             <mat-select required formControlName="officeId" (selectionChange)="officeChanged($event.value)">
@@ -98,7 +104,7 @@
 
           <mat-form-field class="flex-48">
             <mat-label>{{ 'labels.inputs.Staff' | translate }}</mat-label>
-            <mat-select formControlName="staffId">
+            <mat-select formControlName="staffId" [disabled]="editUserForm.controls.isSelfServiceUser.value">
               @for (staff of staffData; track staff) {
                 <mat-option [value]="staff.id">
                   {{ staff.displayName }}
@@ -106,6 +112,29 @@
               }
             </mat-select>
           </mat-form-field>
+
+          @if (editUserForm.controls.isSelfServiceUser.value) {
+            <div class="flex-98 layout-row-wrap gap-2px responsive-column">
+              <mat-form-field class="flex-48">
+                <mat-label>{{ 'labels.inputs.Search Client' | translate }}</mat-label>
+                <input matInput [formControl]="clientsSearch" autocomplete="off" />
+              </mat-form-field>
+              <mat-form-field class="flex-48">
+                <mat-label>{{ 'labels.inputs.Clients' | translate }}</mat-label>
+                <mat-select formControlName="clients" multiple required>
+                  @for (client of clientsData; track client.id) {
+                    <mat-option [value]="client.id">{{ client.displayName }} ({{ client.id }})</mat-option>
+                  }
+                </mat-select>
+                @if (editUserForm.controls.clients.hasError('required')) {
+                  <mat-error
+                    >{{ 'labels.inputs.Clients' | translate }} {{ 'labels.commons.is' | translate }}
+                    <strong>{{ 'labels.commons.required' | translate }}</strong></mat-error
+                  >
+                }
+              </mat-form-field>
+            </div>
+          }
 
           <mat-form-field class="flex-48">
             <mat-label>{{ 'labels.inputs.Roles' | translate }}</mat-label>

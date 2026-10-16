@@ -15,6 +15,7 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
+  ChangeDetectorRef,
   inject
 } from '@angular/core';
 import {
@@ -38,6 +39,7 @@ import { ConfigurationWizardService } from 'app/configuration-wizard/configurati
 import { ContinueSetupDialogComponent } from 'app/configuration-wizard/continue-setup-dialog/continue-setup-dialog.component';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { STANDALONE_SHARED_IMPORTS } from 'app/standalone-shared.module';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 
 /**
  * Create user component.
@@ -61,6 +63,7 @@ export class CreateUserComponent implements OnInit, AfterViewInit {
   private configurationWizardService = inject(ConfigurationWizardService);
   private dialog = inject(MatDialog);
   private passwordsUtility = inject(PasswordsUtility);
+  private changeDetector = inject(ChangeDetectorRef);
 
   /** User form. */
   userForm: UntypedFormGroup;
@@ -70,6 +73,10 @@ export class CreateUserComponent implements OnInit, AfterViewInit {
   rolesData: any;
   /** Staff data. */
   staffData: any;
+  /** Client options available for linking to this user. */
+  clientsData: any[] = [];
+  /** Client search control. */
+  clientsSearch = new UntypedFormControl('');
 
   /* Reference of create user form */
   @ViewChild('userFormRef') userFormRef: ElementRef<any>;
@@ -99,6 +106,16 @@ export class CreateUserComponent implements OnInit, AfterViewInit {
     this.createUserForm();
     this.setStaffData();
     this.setConditionalControls();
+    this.userForm.get('isSelfServiceUser').valueChanges.subscribe((enabled: boolean) => {
+      this.updateSelfServiceControls(enabled);
+    });
+    this.clientsSearch.valueChanges
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        filter((value: string) => (value || '').trim().length >= 2)
+      )
+      .subscribe((value: string) => this.searchClients(value.trim()));
   }
 
   /**
@@ -139,6 +156,8 @@ export class CreateUserComponent implements OnInit, AfterViewInit {
           Validators.required
         ],
         staffId: [''],
+        isSelfServiceUser: [false],
+        clients: [[]],
         roles: [
           '',
           Validators.required
@@ -146,6 +165,34 @@ export class CreateUserComponent implements OnInit, AfterViewInit {
       },
       { validator: confirmPasswordValidator }
     );
+  }
+
+  private updateSelfServiceControls(enabled: boolean) {
+    const staffControl = this.userForm.controls.staffId;
+    const clientsControl = this.userForm.controls.clients;
+    if (enabled) {
+      staffControl.setValue(null);
+      staffControl.disable({ emitEvent: false });
+      clientsControl.setValidators(Validators.required);
+    } else {
+      staffControl.enable({ emitEvent: false });
+      clientsControl.clearValidators();
+      clientsControl.setValue([]);
+    }
+    clientsControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private searchClients(searchText: string) {
+    this.usersService.searchClients(searchText).subscribe((response: any) => {
+      const matches = response.pageItems || response || [];
+      const selectedIds = this.userForm.controls.clients.value || [];
+      const selected = this.clientsData.filter((client) => selectedIds.includes(client.id));
+      this.clientsData = [
+        ...selected,
+        ...matches.filter((client: any) => !selectedIds.includes(client.id))
+      ];
+      this.changeDetector.markForCheck();
+    });
   }
 
   /**
@@ -192,10 +239,9 @@ export class CreateUserComponent implements OnInit, AfterViewInit {
    * if successful redirects to view created user.
    */
   submit() {
-    const user = this.userForm.value;
-    if (this.userForm.value.staffId == null || this.userForm.value.staffId === '') {
-      delete user.staffId;
-    }
+    const user = this.userForm.getRawValue();
+    if (!user.isSelfServiceUser) user.clients = [];
+    if (user.staffId === '') user.staffId = null;
     this.usersService.createUser(user).subscribe((response: any) => {
       if (this.configurationWizardService.showUsersForm) {
         this.configurationWizardService.showUsersForm = false;

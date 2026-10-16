@@ -70,6 +70,26 @@
             </span>
           </div>
         </div>
+
+        @if (userData.isSelfServiceUser) {
+          <div class="content-row">
+            <div class="label">{{ 'labels.inputs.Clients' | translate }}</div>
+            <div class="value">
+              @if (userData.clients?.length) {
+                @for (client of userData.clients; track client.id) {
+                  <span
+                    >{{ client.displayName || client.name }} ({{ client.id }})
+                    @if (!$last) {
+                      ,
+                    }
+                  </span>
+                }
+              } @else {
+                <span>{{ 'labels.commons.None' | translate }}</span>
+              }
+            </div>
+          </div>
+        }
       </div>
 
       <div class="layout-row layout-align-center gap-2percent column-on-mobile back-button-container">
