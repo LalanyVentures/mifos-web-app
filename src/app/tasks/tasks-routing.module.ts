@@ -95,7 +95,7 @@ const routes: Routes = [
       ]
     },
     {
-      path: 'checker-inbox-and-tasks/checker-inbox',
+      path: 'checker-inbox',
       children: [
         {
           path: ':id/view',
