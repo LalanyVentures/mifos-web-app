@@ -87,7 +87,7 @@ export class BreadcrumbComponent implements AfterViewInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   /** Array of breadcrumbs. */
-  breadcrumbs: Breadcrumb[];
+  breadcrumbs: Breadcrumb[] = [];
   /* Reference of breadcrumb */
   @ViewChild('breadcrumb') breadcrumb: ElementRef<any>;
   /* Template for popover on breadcrumb */

@@ -96,11 +96,12 @@ const routes: Routes = [
     },
     {
       path: 'checker-inbox',
+      data: { breadcrumb: 'Checker Inbox & Tasks' },
       children: [
         {
           path: ':id/view',
           component: ViewCheckerInboxComponent,
-          data: { title: 'View Checker Inbox Component', routeParamBreadcrumb: 'clientId' },
+          data: { title: 'View Checker Inbox Component', routeParamBreadcrumb: 'id' },
           resolve: {
             checkerInboxDetail: GetCheckerInboxDetailResolver
           }
